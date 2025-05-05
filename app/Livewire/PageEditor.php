@@ -80,8 +80,8 @@ class PageEditor extends Component
     {
         // The event sends { content: contentJson }, so we access it via $content['content']
         // Ensure content is treated as an array/object for JSON storage
-        if (isset($content['content'])) {
-            $this->page->update(['content' => (array) $content['content']]);
+        if (isset($content)) {
+            $this->page->update(['content' => (array) $content]);
             session()->flash('message', 'Page content saved.'); // Add feedback for content save
         } else {
              session()->flash('error', 'Failed to save content: Invalid data format received.'); // Add error feedback

@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $page->name ?? config('app.name', 'Laravel') }}</title>
 
-    {{-- Include base CSS if needed (e.g., Tailwind from app.css) --}}
-    {{-- Check your main layout for how CSS is typically included --}}
-    {{-- Example: <link rel="stylesheet" href="{{ asset('build/assets/app-*.css') }}"> --}}
-    {{-- Or use Vite directive if configured: @vite(['resources/css/app.css']) --}}
+    {{-- Include base CSS (Tailwind) via Vite --}}
+    @vite(['resources/css/app.css'])
 
-    {{-- Inject the CSS rendered from GrapesJS data --}}
+    {{-- Inject the CSS rendered from GrapesJS data (component-specific styles) --}}
     @if(!empty($renderedCss))
         <style type="text/css">
             {!! $renderedCss !!}

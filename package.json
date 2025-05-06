@@ -11,6 +11,7 @@
         "axios": "^1.7.4",
         "concurrently": "^9.0.1",
         "grapesjs-blocks-basic": "^1.0.2",
+        "grapesjs-plugin-forms": "^2.0.6",
         "grapesjs-tailwind": "^1.0.11",
         "laravel-vite-plugin": "^1.0",
         "tailwindcss": "^4.0.7",

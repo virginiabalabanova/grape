@@ -36,10 +36,10 @@
     </div>
 
     {{-- Conditionally show GrapesJS editor only when editing an existing page --}}
-    @if(!$isCreating && isset($pageContent)) {{-- Ensure content exists before adding data attribute --}}
+    @if(!$isCreating && $page->id) {{-- We ensure $pageContent is always set in the component, so only check $page->id --}}
         <hr class="dark:border-gray-600">
-        {{-- Add data-content attribute with JSON encoded page content --}}
-        <div wire:ignore id="gjs-container" data-content="@json($pageContent)">
+        {{-- Default to an empty object for @json if $pageContent is null or empty array, ensuring valid JSON like {} --}}
+        <div wire:ignore id="gjs-container" data-content='@json($page->content ?? new stdClass())' data-page-id='{{ $page->id }}'>
             <h2 class="text-xl mb-4">Page Builder</h2>
             <button id="save-content" class="bg-green-600 text-white px-4 py-2 rounded mb-4">Save Content</button>
 
@@ -47,30 +47,6 @@
                 <div id="#gjs-container">
                     <div id="gjs"></div>
                 </div>
-                <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const gjsContainer = document.getElementById('gjs');
-
-    if (gjsContainer) {
-        const editor = grapesjs.init({
-            container: '#gjs',
-            height: '600px',
-            width: 'auto',
-            storageManager: false,
-            plugins: [window.grapesjsBasicBlocks, window.grapesjsTailwind],
-        });
-
-        // ✅ Load existing content from backend (passed by Livewire)
-        const pageContent = @json($page->content);
-
-        if (pageContent) {
-            editor.loadProjectData(pageContent);
-        }
-
-        // Save logic...
-    }
-});
-</script>
 
     @else
         <div class="mt-6 p-4 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100">

@@ -7,6 +7,7 @@ use App\Http\Controllers\PageController;
 use App\Livewire\PageEditor;
 // Removed duplicate imports for Appearance, Password, Profile
 use App\Models\Page;
+use Illuminate\Http\Request; // Added for the new API route
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,10 +26,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
+require __DIR__.'/auth.php';
+
 // Page Routes (grouped for clarity)
 Route::middleware(['auth'])->prefix('pages')->name('pages.')->group(function () {
     Route::get('/', [PageController::class, 'index'])->name('index'); // Add index route
-    Route::post('/{page}/content', [PageController::class, 'saveContent'])->name('content.save');
+    // Route::post('/{page}/content', [PageController::class, 'saveContent'])->name('content.save'); // This will be replaced by the API route
     Route::get('/{page}/edit', function (Page $page) {
         return view('edit', ['page' => $page]);
     })->name('edit');
@@ -51,7 +54,7 @@ Route::get('/{page:slug}', function (Page $page) {
     // Render the GrapesJS content
     // Assumes $page->content is automatically cast to an array by the Page model
     $renderedContent = GrapesRenderer::render($page->content);
-//dd($page->content);
+
     // Pass the rendered HTML and CSS, along with the page object (for title, etc.)
     return view('pages.show', [
         'page' => $page, // Keep page for title, meta, etc.
@@ -60,4 +63,15 @@ Route::get('/{page:slug}', function (Page $page) {
     ]);
 })->name('pages.show');
 
-require __DIR__.'/auth.php';
+// API route for saving GrapesJS content (ensure this is before auth.php if it's in web.php)
+Route::middleware(['auth'])->post('/api/pages/{page}/save-content', function (Request $request, Page $page) {
+    // Basic validation, can be expanded
+    $validated = $request->validate([
+        'content' => 'required|array' // Ensure content is provided and is an array (GrapesJS project data)
+    ]);
+
+    $page->content = $validated['content'];
+    $page->save();
+
+    return response()->json(['success' => true, 'message' => 'Content saved successfully.']);
+})->name('api.pages.save-content');

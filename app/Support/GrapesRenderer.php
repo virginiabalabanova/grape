@@ -59,7 +59,41 @@ class GrapesRenderer
 
         // ✅ Fallback to div if no tagName
         $tag = $component['tagName'] ?? 'div';
-        $attributes = self::renderAttributes($component['attributes'] ?? []);
+        $componentAttributes = $component['attributes'] ?? [];
+
+        // Handle classes specifically
+        $componentClassesRaw = $component['classes'] ?? [];
+        if (!empty($componentClassesRaw) && is_array($componentClassesRaw)) {
+            $finalClasses = [];
+            foreach ($componentClassesRaw as $classEntry) {
+                if (is_string($classEntry)) {
+                    $finalClasses[] = $classEntry;
+                } elseif (is_array($classEntry)) {
+                    // If it's an array of strings (e.g., from a bad merge or complex state)
+                    // try to flatten and add valid strings.
+                    // This is a basic handling; more complex structures might need specific parsing.
+                    foreach(Arr::flatten($classEntry) as $subClass) {
+                        if (is_string($subClass)) {
+                            $finalClasses[] = $subClass;
+                        }
+                    }
+                }
+                // Add more sophisticated handling here if classes can be objects like { name: '...', active: true }
+                // For now, we only process string entries or flattened arrays of strings.
+            }
+
+            if (!empty($finalClasses)) {
+                $classString = implode(' ', array_unique($finalClasses)); // Use array_unique to avoid duplicates
+                // Merge with existing class attribute or add new one
+                if (isset($componentAttributes['class'])) {
+                    $componentAttributes['class'] = trim($componentAttributes['class'] . ' ' . $classString);
+                } else {
+                    $componentAttributes['class'] = $classString;
+                }
+            }
+        } // <-- This closes the "if (!empty($componentClassesRaw)...)" block
+
+        $attributes = self::renderAttributes($componentAttributes);
         $content = '';
 
         if (!empty($component['components'])) {

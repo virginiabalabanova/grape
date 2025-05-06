@@ -75,32 +75,31 @@ class PageEditor extends Component
         // No redirect needed for update, stay on the page
     }
 
-    #[\Livewire\Attributes\On('saveGrapesContent')]
-    public function saveContent($content)
-    {
-        // The event sends { content: contentJson }, so we access it via $content['content']
-        // Ensure content is treated as an array/object for JSON storage
-        if (isset($content)) {
-            $this->page->update(['content' => (array) $content]);
-            session()->flash('message', 'Page content saved.'); // Add feedback for content save
-        } else {
-             session()->flash('error', 'Failed to save content: Invalid data format received.'); // Add error feedback
-             \Log::error('Invalid content data received in PageEditor:', ['data' => $content]); // Log the error
-        }
-    }
+    // The saveGrapesContent method and its listener are no longer needed
+    // as content saving is now handled by a direct Fetch API call.
 
     public function render()
     {
-        // Pass the page content to the view, ensuring it's decoded if stored as JSON string
-        // The Page model should ideally handle casting 'content' to array/object automatically.
-        // If not, uncomment the json_decode line.
-        $pageContent = $this->page->content;
-        // if (is_string($pageContent)) {
-        //     $pageContent = json_decode($pageContent, true);
+        $pageData = $this->page->content;
+
+        // Ensure $pageData is an array or an object for GrapesJS.
+        // If it's null or an empty string, default to an empty array
+        // to ensure @json($pageData) produces valid JSON ('[]' or '{}') for parsing.
+        if (empty($pageData)) {
+            $pageData = []; // GrapesJS expects an object for project data,
+                           // an empty object {} might be better if loadProjectData([]) causes issues.
+                           // For now, [] should be safe for @json and subsequent checks in JS.
+        }
+        // If $pageData is a JSON string from the DB and not automatically cast, decode it.
+        // This depends on your Page model's casts. If 'content' is cast to 'array' or 'object',
+        // this json_decode is likely not needed.
+        // elseif (is_string($pageData)) {
+        //     $decoded = json_decode($pageData, true);
+        //     $pageData = (json_last_error() === JSON_ERROR_NONE) ? $decoded : [];
         // }
 
         return view('livewire.page-editor', [
-            'pageContent' => $pageContent ?? null // Pass content or null if empty/not set
+            'pageContent' => $pageData
         ]);
     }
 }

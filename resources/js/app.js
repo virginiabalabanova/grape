@@ -18,6 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
             plugins: [basicBlocks, grapesjsTailwind],
         });
 
+        // Load initial content from data attribute
+        const gjsDataContainer = document.getElementById('gjs-container'); // Get the container with the data attribute
+        if (gjsDataContainer && gjsDataContainer.dataset.content) {
+            try {
+                const initialContent = JSON.parse(gjsDataContainer.dataset.content);
+                if (initialContent) {
+                    editor.loadProjectData(initialContent);
+                    console.log('Loaded initial content into GrapesJS.'); // Debug log
+                }
+            } catch (e) {
+                console.error('Failed to parse or load initial GrapesJS content:', e);
+            }
+        }
+
         // Add the save button listener only if the button also exists
         if (saveButton) {
             saveButton.addEventListener('click', () => {

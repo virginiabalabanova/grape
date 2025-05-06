@@ -2,47 +2,144 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 class GrapesRenderer
 {
-    public static function render(array $components): string
+    /**
+     * Renders the full GrapesJS project data into HTML and CSS.
+     *
+     * @param array|null $projectData The full data object from editor.getProjectData()
+     * @return array ['html' => string, 'css' => string]
+     */
+    public static function render(?array $projectData): array
     {
-        return self::renderComponent($components);
-    }
-
-    protected static function renderComponent($component): string
-    {
-        if (is_array($component) && isset($component[0])) {
-            // Multiple components
-            return collect($component)->map(function ($comp) {
-                return self::renderComponent($comp);
-            })->implode('');
+        if (empty($projectData)) {
+            return ['html' => '', 'css' => ''];
         }
 
-        if (!isset($component['type'])) {
+        // Extract the main component structure (adjust path if necessary based on your GrapesJS config)
+        // Common path: $projectData['pages'][0]['frames'][0]['component']
+        // Fallback to root if pages structure doesn't exist
+        $mainComponent = Arr::get($projectData, 'pages.0.frames.0.component', $projectData);
+
+        // Render HTML structure
+        $html = self::renderComponent($mainComponent);
+
+        // Extract and render CSS
+        $css = self::renderStyles($projectData);
+
+        return ['html' => $html, 'css' => $css];
+    }
+
+    /**
+     * Recursively renders a GrapesJS component and its children into HTML.
+     *
+     * @param mixed $component The component data (array or string for text nodes)
+     * @return string
+     */
+    protected static function renderComponent($component): string
+    {
+        if (is_array($component) && Arr::isList($component)) {
+            return collect($component)->map(fn ($comp) => self::renderComponent($comp))->implode('');
+        }
+
+        if (is_string($component)) {
+            return htmlspecialchars($component);
+        }
+
+        if (isset($component['type']) && $component['type'] === 'textnode') {
+            return htmlspecialchars($component['content'] ?? '');
+        }
+
+        if (!is_array($component)) {
             return '';
         }
 
+        // ✅ Fallback to div if no tagName
         $tag = $component['tagName'] ?? 'div';
         $attributes = self::renderAttributes($component['attributes'] ?? []);
         $content = '';
 
-        // If the component has inner components
         if (!empty($component['components'])) {
             $content = self::renderComponent($component['components']);
-        }
-
-        // If the component has raw content (like a text node)
-        if (!empty($component['content'])) {
-            $content .= $component['content'];
+        } elseif (!empty($component['content'])) {
+            $content .= htmlspecialchars($component['content']);
         }
 
         return "<{$tag}{$attributes}>{$content}</{$tag}>";
     }
 
+    /**
+     * Renders component attributes into an HTML string.
+     *
+     * @param array $attributes
+     * @return string
+     */
     protected static function renderAttributes(array $attributes): string
     {
-        return collect($attributes)->map(function ($value, $key) {
-            return " {$key}=\"" . htmlspecialchars($value, ENT_QUOTES) . "\"";
-        })->implode('');
+        // Exclude GrapesJS internal attributes like 'data-gjs-*' if needed
+        return collect($attributes)
+            ->reject(fn ($value, $key) => Str::startsWith($key, 'data-gjs-'))
+            ->map(function ($value, $key) {
+                // Handle boolean attributes (e.g., disabled, checked)
+                if (is_bool($value)) {
+                    return $value ? " {$key}" : '';
+                }
+                return " {$key}=\"" . htmlspecialchars($value, ENT_QUOTES) . "\"";
+            })->implode('');
+    }
+
+     /**
+     * Extracts and formats CSS rules from GrapesJS project data.
+     *
+     * @param array $projectData
+     * @return string
+     */
+    protected static function renderStyles(array $projectData): string
+    {
+        $styles = Arr::get($projectData, 'styles', []); // GrapesJS often stores styles here
+        if (empty($styles) && isset($projectData['css'])) {
+             // Fallback if styles are directly under 'css' key
+             return is_string($projectData['css']) ? $projectData['css'] : '';
+        }
+        if (!is_array($styles)) return '';
+
+
+        $cssString = '';
+        foreach ($styles as $styleRule) {
+            if (empty($styleRule['selectors']) || empty($styleRule['style'])) {
+                continue;
+            }
+
+            // Ensure selectors is an array
+            $selectors = is_array($styleRule['selectors']) ? $styleRule['selectors'] : [$styleRule['selectors']];
+
+            // Join multiple selectors with a comma
+            $selectorString = collect($selectors)->map(function($selector) {
+                 // Handle potential object selectors (though less common for CSS rules)
+                 return is_string($selector) ? $selector : ($selector['name'] ?? '');
+            })->filter()->implode(', ');
+
+
+            if (empty($selectorString)) continue;
+
+            // Format the style properties
+            $styleProperties = collect($styleRule['style'])
+                ->map(fn ($value, $key) => Str::kebab($key) . ": " . $value . ";")
+                ->implode(' ');
+
+            $cssString .= "{$selectorString} { {$styleProperties} }\n";
+        }
+
+        // Look for CSS stored directly in pages (less common but possible)
+         $pageCss = Arr::get($projectData, 'pages.0.frames.0.css');
+         if (!empty($pageCss) && is_string($pageCss)) {
+             $cssString .= "\n" . $pageCss;
+         }
+
+
+        return $cssString;
     }
 }

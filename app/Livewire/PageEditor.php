@@ -91,6 +91,16 @@ class PageEditor extends Component
 
     public function render()
     {
-        return view('livewire.page-editor');
+        // Pass the page content to the view, ensuring it's decoded if stored as JSON string
+        // The Page model should ideally handle casting 'content' to array/object automatically.
+        // If not, uncomment the json_decode line.
+        $pageContent = $this->page->content;
+        // if (is_string($pageContent)) {
+        //     $pageContent = json_decode($pageContent, true);
+        // }
+
+        return view('livewire.page-editor', [
+            'pageContent' => $pageContent ?? null // Pass content or null if empty/not set
+        ]);
     }
 }

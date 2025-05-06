@@ -39,13 +39,25 @@ Route::middleware(['auth'])->prefix('pages')->name('pages.')->group(function () 
 });
 
 
+use App\Support\GrapesRenderer; // Import the renderer
+
 // Public page view route (must be last to avoid catching other routes)
 Route::get('/{page:slug}', function (Page $page) {
     // Ensure only published pages are publicly visible, unless authenticated user
     if ($page->status !== 'published' && !auth()->check()) {
         abort(404);
     }
-    return view('pages.show', compact('page'));
+
+    // Render the GrapesJS content
+    // Assumes $page->content is automatically cast to an array by the Page model
+    $renderedContent = GrapesRenderer::render($page->content);
+//dd($page->content);
+    // Pass the rendered HTML and CSS, along with the page object (for title, etc.)
+    return view('pages.show', [
+        'page' => $page, // Keep page for title, meta, etc.
+        'renderedHtml' => $renderedContent['html'],
+        'renderedCss' => $renderedContent['css'],
+    ]);
 })->name('pages.show');
 
 require __DIR__.'/auth.php';

@@ -57,7 +57,18 @@ class GrapesRenderer
             return '';
         }
 
-        // ✅ Fallback to div if no tagName
+        if (($component['type'] ?? null) === 'image') {
+            $attrs = $component['attributes'] ?? [];
+
+            $src = $attrs['src'] ?? '';
+            $alt = $attrs['alt'] ?? '';
+
+            $attributes = self::renderAttributes($attrs);
+
+            return "<img src=\"{$src}\" alt=\"{$alt}\"{$attributes} />";
+        }
+
+        // Normal components
         $tag = $component['tagName'] ?? 'div';
         $componentAttributes = $component['attributes'] ?? [];
 

@@ -14,5 +14,18 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Customize exception handling for JSON requests
+        $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $e) {
+            // Check if the request explicitly asks for JSON
+            if ($request->expectsJson()) {
+                return true;
+            }
+
+            // Optionally, always return JSON for specific route prefixes (e.g., '/api/')
+            // if ($request->is('api/*')) {
+            //     return true;
+            // }
+
+            return false; // Fallback to default HTML rendering
+        });
     })->create();

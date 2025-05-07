@@ -14,28 +14,22 @@ document.addEventListener('DOMContentLoaded', () => {
             height: '100vh',
             width: 'auto',
             storageManager: false,
-
+            assetManager: {
+                upload: '/api/assets/upload', // Endpoint for uploads
+                uploadName: 'files', // Name of the file input field in the POST request (GrapesJS default is 'files[]', Laravel expects 'files' for array or 'files.0' etc.)
+                                     // Our route expects 'files' as an array, so GrapesJS default 'files[]' should map to 'files' in PHP.
+                                     // If GrapesJS sends 'files[]', PHP will see it as `$_FILES['files']` which is an array of files.
+                                     // If it sends 'file-0', 'file-1', then PHP sees `$_FILES['file-0']`.
+                                     // The default 'files[]' from GrapesJS should work with Laravel's $request->file('files') which returns an array.
+                params: { // Additional parameters to send with the upload request
+                    '_token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                // Optional: Define how to handle the response from the server
+                // By default, GrapesJS expects a JSON response like: { data: [{ src: 'url1' }, { src: 'url2' }] } or { data: ['url1', 'url2'] }
+                // Our Laravel route returns { data: ['url1', 'url2'] } which should be compatible.
+            },
             // Load basic blocks
             plugins: [basicBlocks, gjsForms, grapesjsTailwind],
-        });
-        
-        editor.BlockManager.add('section', {
-            label: 'Section T',
-            category: 'Basic',
-            attributes: { class: 'gjs-block-section' },
-            content: '<section class="container mx-auto px-4 py-8"><h2 class="text-2xl font-bold mb-4">Your Heading</h2><p class="text-gray-700">Your content goes here...</p></section>',
-        });
-        
-        editor.BlockManager.add('2-columns', {
-            label: '2 Columns T',
-            category: 'Basic',
-            attributes: { class: 'gjs-block-2-columns' },
-            content: `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-100 p-4">Column 1</div>
-                <div class="bg-gray-100 p-4">Column 2</div>
-            </div>
-            `,
         });
         
         editor.BlockManager.add('text', {

@@ -28,23 +28,233 @@ document.addEventListener('DOMContentLoaded', () => {
                 // By default, GrapesJS expects a JSON response like: { data: [{ src: 'url1' }, { src: 'url2' }] } or { data: ['url1', 'url2'] }
                 // Our Laravel route returns { data: ['url1', 'url2'] } which should be compatible.
             },
-            // Load basic blocks
-            plugins: [basicBlocks, gjsForms, grapesjsTailwind],
+            // Load basic blocks gjsForms
+            plugins: [basicBlocks, grapesjsTailwind],
         });
         
-        editor.BlockManager.add('text', {
-            label: 'Text T',
-            category: 'Basic',
+        editor.BlockManager.add('section', {
+            label: 'Section',
+            category: 'Custom',
+            attributes: { class: 'gjs-block-section' },
+            content: '<section class="container mx-auto px-4 py-8"><h2 class="text-2xl font-bold mb-4">Your Heading</h2><p class="text-gray-700">Your content goes here...</p></section>',
+        });
+        
+        editor.BlockManager.add('2-columns', {
+            label: '2 Columns',
+            category: 'Custom',
+            attributes: { class: 'gjs-block-2-columns' },
+            content: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-100 p-4" data-gjs-type="default" data-gjs-droppable="true">
+                    </div>
+                    <div class="bg-gray-100 p-4" data-gjs-type="default" data-gjs-droppable="true">
+                    </div>
+                </div>
+            `,
+        });
+
+        editor.BlockManager.add('text1', {
+            id: 'text-1',
+            label: 'Text',
+            category: 'Additional',
             content: '<p class="text-gray-700">Insert your text here...</p>',
         });
         
         editor.BlockManager.add('button', {
-            label: 'Button T',
-            category: 'Basic',
+            id: 'button-1',
+            label: 'Button',
+            category: 'Additional',
             content: '<a class="inline-block px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" href="#">Button</a>',
         });
         
+
+        // Add a custom sector
+        editor.StyleManager.addSector('tailwind', {
+            name: 'Tailwind Styles',
+            open: true,
+            buildProps: ['text-color', 'bg-color', 'padding', 'button-variant'],
+        });
+
+        // Add custom style properties
+        editor.StyleManager.addProperty('tailwind', [
+            {
+                property: 'text-color',
+                name: 'Text Color',
+                type: 'select',
+                defaults: 'text-gray-800',
+                options: [
+                    { value: 'text-gray-800', name: 'Gray' },
+                    { value: 'text-red-500', name: 'Red' },
+                    { value: 'text-green-500', name: 'Green' },
+                    { value: 'text-blue-500', name: 'Blue' },
+                ]
+            },
+            {
+                property: 'bg-color',
+                name: 'Background Color',
+                type: 'select',
+                defaults: 'bg-white',
+                options: [
+                    { value: 'bg-white', name: 'White' },
+                    { value: 'bg-gray-100', name: 'Gray' },
+                    { value: 'bg-yellow-200', name: 'Yellow' },
+                    { value: 'bg-blue-200', name: 'Blue' },
+                ]
+            },
+            {
+                property: 'padding',
+                name: 'Padding',
+                type: 'select',
+                defaults: 'p-4',
+                options: [
+                    { value: 'p-2', name: 'Small (p-2)' },
+                    { value: 'p-4', name: 'Normal (p-4)' },
+                    { value: 'p-8', name: 'Large (p-8)' },
+                ]
+            },
+            {
+                property: 'button-variant',
+                name: 'Button Variant',
+                type: 'select',
+                defaults: '',
+                options: [
+                    { value: '', name: 'None' },
+                    { value: 'btn-primary', name: 'Primary' },
+                    { value: 'btn-secondary', name: 'Secondary' },
+                ]
+            },
+        ]);
+
+        editor.on('component:styleUpdate', (model, prop) => {
+            const style = model.getStyle();
         
+            const twClasses = [
+                style['text-color'],
+                style['bg-color'],
+                style['padding'],
+                style['button-variant']
+            ].filter(Boolean); // Remove empty ones
+        
+            const el = model.getEl();
+        
+            if (el) {
+                // Remove previous TW classes
+                el.className = el.className
+                    .split(' ')
+                    .filter(c => !c.startsWith('text-') && !c.startsWith('bg-') && !c.startsWith('p-') && !c.startsWith('btn-'))
+                    .join(' ');
+        
+                // Add new TW classes
+                el.classList.add(...twClasses);
+            }
+        });
+
+       
+
+        editor.BlockManager.add('my-block', {
+            label: 'My Block',
+            content: '<div data-custom-type="my-special-block" class="p-4 bg-gray-100">Content</div>',
+        });
+
+        editor.BlockManager.add('my-special-button', {
+            label: 'Special Button',
+            category: 'Buttons',
+            content: {
+                type: 'my-special-button',
+                content: 'Click me!',
+                classes: ['btn-primary', 'px-6', 'py-2', 'bg-blue-600', 'text-white', 'rounded'],
+                attributes: {
+                    href: '#',
+                },
+            },
+        });
+
+        editor.DomComponents.addType('my-special-button', {
+            isComponent(el) {
+              if (el.tagName === 'BUTTON' && el.classList.contains('btn-primary')) {
+                return { type: 'my-special-button' };
+              }
+            },
+            model: {
+              defaults: {
+                tagName: 'button',
+                draggable: true,
+                droppable: false,
+              },
+            }
+          });
+
+        /*editor.DomComponents.addType('my-special-block', {
+            model: {
+              defaults: {
+                tagName: 'div',
+                classes: ['p-4', 'bg-gray-100'],
+                customName: 'Special Block',
+              },
+            },
+        });*/
+
+        editor.on('component:selected', (component) => {
+            const type = component.get('type') || component.getAttributes()['data-custom-type'];
+            console.log(type);
+            if (type === 'link') {
+              // Clear previous properties
+              editor.StyleManager.getSectors().reset();
+          
+              // Add custom sector + properties for this block
+              editor.StyleManager.addSector('special', {
+                name: 'Special Block Styles',
+                open: true,
+                //buildProps: ['text-color', 'bg-color'],
+              });
+          
+              editor.StyleManager.addProperty('special', [
+                {
+                  property: 'text-color',
+                  name: 'Text Color',
+                  type: 'select',
+                  defaults: 'text-black',
+                  options: [
+                    { value: 'text-black', name: 'Black' },
+                    { value: 'text-red-500', name: 'Red' },
+                    { value: 'text-blue-500', name: 'Blue' },
+                  ],
+                },
+                {
+                  property: 'bg-color',
+                  name: 'Background',
+                  type: 'select',
+                  defaults: 'bg-white',
+                  options: [
+                    { value: 'bg-white', name: 'White' },
+                    { value: 'bg-gray-200', name: 'Gray' },
+                    { value: 'bg-yellow-300', name: 'Yellow' },
+                  ],
+                },
+                {
+                    property: 'button-variant',
+                    name: 'Button Variant',
+                    type: 'select',
+                    defaults: '',
+                    options: [
+                        { value: '', name: 'None' },
+                        { value: 'btn-primary', name: 'Primary' },
+                        { value: 'btn-secondary', name: 'Secondary' },
+                    ]
+                },
+              ]);
+            } else {
+              // Reset style manager for other components
+              //editor.StyleManager.getSectors().reset();
+            }
+          });  
+
+       /* editor.on('component:styleUpdate:text-color', (component, value) => {
+            const el = component.getEl();
+            if (!el) return;
+            const className = value ?? ''; // Simplified: value is expected to be the class string directly
+            replaceClassByPrefix(el, 'text-', className);
+        });*/
 
         // Load initial content from data attribute
         const gjsDataContainer = document.getElementById('gjs-container'); // Get the container with the data attribute
@@ -143,3 +353,13 @@ document.addEventListener('DOMContentLoaded', () => {
          console.warn('GrapesJS container (#gjs) not found.');
     }
 });
+
+function replaceClassByPrefix(el, prefix, newClass) {
+    Array.from(el.classList)
+        .filter(cls => cls.startsWith(prefix))
+        .forEach(cls => el.classList.remove(cls));
+
+    if (newClass) {
+        el.classList.add(newClass);
+    }
+}

@@ -74,3 +74,11 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+.btn-primary {
+    @apply bg-blue-500 text-white px-4 py-2 rounded;
+}
+
+.btn-secondary {
+    @apply bg-gray-500 text-white px-4 py-2 rounded;
+}

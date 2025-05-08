@@ -68,6 +68,56 @@ class GrapesRenderer
             return "<img src=\"{$src}\" alt=\"{$alt}\"{$attributes} />";
         }
 
+        if (($component['type'] ?? null) === 'link') {
+
+            // Step 1: Get attributes
+            $attrs = $component['attributes'] ?? [];
+        
+            // Step 2: Merge classes into attributes
+            $componentClassesRaw = $component['classes'] ?? [];
+            if (!empty($componentClassesRaw)) {
+                $finalClasses = [];
+                foreach ($componentClassesRaw as $classEntry) {
+                    if (is_string($classEntry)) {
+                        $finalClasses[] = $classEntry;
+                    } elseif (is_array($classEntry)) {
+                        foreach (Arr::flatten($classEntry) as $subClass) {
+                            if (is_string($subClass)) {
+                                $finalClasses[] = $subClass;
+                            }
+                        }
+                    }
+                }
+        
+                if (!empty($finalClasses)) {
+                    if (isset($attrs['class'])) {
+                        $attrs['class'] .= ' ' . implode(' ', $finalClasses);
+                    } else {
+                        $attrs['class'] = implode(' ', $finalClasses);
+                    }
+                }
+            }
+        
+            // Step 3: Handle href
+            $href = $attrs['href'] ?? '#';
+            unset($attrs['href']); // Remove href from attributes to avoid duplicate
+        
+            // Step 4: Render attributes
+            $attributes = self::renderAttributes($attrs);
+        
+            // Step 5: Render content
+            $content = '';
+            if (!empty($component['components'])) {
+                $content = self::renderComponent($component['components']);
+            } elseif (!empty($component['content'])) {
+                $content .= htmlspecialchars($component['content']);
+            }
+        
+            // Step 6: Return the anchor
+            return "<a href=\"{$href}\"{$attributes}>{$content}</a>";
+        }
+        
+
         // Normal components
         $tag = $component['tagName'] ?? 'div';
         $componentAttributes = $component['attributes'] ?? [];

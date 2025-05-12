@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'text-': 'tailwind-text-class',
                     'bg-': 'tailwind-bg-class',
                     'rounded-': 'tailwind-rounded-class', // example
+                    'btn-': 'button-type',
                   };
                   
                   const component = editor.getSelected();
@@ -90,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     editor.BlockManager.add('custom-button', {
         label: 'Custom Button',
         category: 'Custom',
-        content: '<a class="btn bg-green-600 text-white px-4 py-2 rounded mb-4" href="#">Click me</a>',
+        content: '<a class="btn btn-primary" href="#">Click me</a>',
     });
 
     editor.on('load', () => {
@@ -130,6 +131,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 { id: 'bg-red-500', name: 'Red 500' },
                 { id: 'bg-green-500', name: 'Green 500' },
                 { id: 'bg-blue-500', name: 'Blue 500' },
+            ],
+        });
+
+        sm.addProperty('tailwind_utils', {
+            id: 'button-type',
+            name: 'Button Type',
+            type: 'tailwind-class',
+            changeProp: 1,
+            defaults: '',
+            options: [
+                { id: '', name: 'Default' },
+                { id: 'btn-primary', name: 'Primary' },
+                { id: 'btn-secondary', name: 'Secondary' },
+                { id: 'btn-outline', name: 'Outline' },
             ],
         });
     });
@@ -177,10 +192,33 @@ document.addEventListener('DOMContentLoaded', () => {
             component.setAttributes({ class: updated });
         }
     });
+
+    editor.on(`component:update:button-type`, (component) => {
+        const value = component.get('button-type');
+        const el = component.getEl();
+        if (!el) return;
+
+        // Remove existing button type classes
+        ['btn-primary', 'btn-secondary', 'btn-outline'].forEach(cls => {
+            if (el.classList.contains(cls)) el.classList.remove(cls);
+        });
+
+        // Add the new button type class
+        if (value && value.startsWith('btn-')) {
+            el.classList.add(value);
+        }
+
+        const current = component.getAttributes().class || '';
+        const updated = el.className;
+
+        if (current !== updated) {
+            component.setAttributes({ class: updated });
+        }
+    });
         
-        // Load initial content from data attribute
-        const gjsDataContainer = document.getElementById('gjs-container'); 
-        if (gjsDataContainer && typeof gjsDataContainer.dataset.content === 'string') { 
+    // Load initial content from data attribute
+    const gjsDataContainer = document.getElementById('gjs-container'); 
+    if (gjsDataContainer && typeof gjsDataContainer.dataset.content === 'string') { 
             try {
                 const parsedJson = JSON.parse(gjsDataContainer.dataset.content);
                 if (parsedJson && typeof parsedJson === 'object' && (Object.keys(parsedJson).length > 0 || Array.isArray(parsedJson) && parsedJson.length > 0) ) {

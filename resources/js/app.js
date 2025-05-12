@@ -22,11 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
             },
             // Load basic blocks , gjsForms, grapesjsTailwind
-            plugins: [basicBlocks],
+            plugins: [basicBlocks, grapesjsTailwind],
         });
 
                 
         const TEXT_COLOR_PROP = 'tailwind-text-class';
+        const BG_COLOR_PROP = 'tailwind-bg-class';
+        const ROUNDED_PROP ='tailwind-rounded-class';
 
         editor.StyleManager.addType('tailwind-class', {
             create({ props }) {
@@ -53,14 +55,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Change listener
             select.addEventListener('change', () => {
                 const value = select.value;
+                console.log('change');
+                console.log(value);
                 if (props.model?.setValue) {
                 props.model.setValue(value);
                 }
         
-                const component = editor.getSelected();
-                if (component) {
-                component.set('tailwind-text-class', value);
-                }
+                const prefixMap = {
+                    'text-': 'tailwind-text-class',
+                    'bg-': 'tailwind-bg-class',
+                    'rounded-': 'tailwind-rounded-class', // example
+                  };
+                  
+                  const component = editor.getSelected();
+                  if (component && typeof value === 'string') {
+                    const matchedPrefix = Object.keys(prefixMap).find(prefix => value.startsWith(prefix));
+                    if (matchedPrefix) {
+                      component.set(prefixMap[matchedPrefix], value);
+                    }
+                  }
             });
         
             wrapper.appendChild(select);
@@ -77,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     editor.BlockManager.add('custom-button', {
         label: 'Custom Button',
         category: 'Custom',
-        content: '<a class="btn text-black" href="#">Click me</a>',
+        content: '<a class="btn bg-green-600 text-white px-4 py-2 rounded mb-4" href="#">Click me</a>',
     });
 
     editor.on('load', () => {
@@ -103,7 +116,24 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'text-blue-500', name: 'Blue 500' },
         ],
         });
+
+        sm.addProperty('tailwind_utils', {
+            id: BG_COLOR_PROP,
+            name: 'Background Color',
+            type: 'tailwind-class',
+            changeProp: 1,
+            defaults: '',
+            options: [
+                { id: '', name: 'Default' },
+                { id: 'bg-black', name: 'Black' },
+                { id: 'bg-white', name: 'White' },
+                { id: 'bg-red-500', name: 'Red 500' },
+                { id: 'bg-green-500', name: 'Green 500' },
+                { id: 'bg-blue-500', name: 'Blue 500' },
+            ],
+        });
     });
+
 
     // ✅ Listen for component updates to apply Tailwind class
     editor.on(`component:update:${TEXT_COLOR_PROP}`, (component) => {
@@ -112,11 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!el) return;
 
         Array.from(el.classList).forEach(cls => {
-        if (cls.startsWith('text-')) el.classList.remove(cls);
+            if (cls.startsWith('text-')) el.classList.remove(cls);
         });
 
         if (value && value.startsWith('text-')) {
-        el.classList.add(value);
+            el.classList.add(value);
         }
 
         const current = component.getAttributes().class || '';
@@ -125,7 +155,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (current !== updated) {
             component.setAttributes({ class: updated });
         }
+    });
+
+    editor.on(`component:update:${BG_COLOR_PROP}`, (component) => {
+        const value = component.get(BG_COLOR_PROP);
+        const el = component.getEl();
+        if (!el) return;
+
+        Array.from(el.classList).forEach(cls => {
+            if (cls.startsWith('bg-')) el.classList.remove(cls);
         });
+
+        if (value && value.startsWith('bg-')) {
+            el.classList.add(value);
+        }
+
+        const current = component.getAttributes().class || '';
+        const updated = el.className;
+
+        if (current !== updated) {
+            component.setAttributes({ class: updated });
+        }
+    });
         
         // Load initial content from data attribute
         const gjsDataContainer = document.getElementById('gjs-container'); 

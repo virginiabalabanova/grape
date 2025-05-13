@@ -47,19 +47,18 @@ function initializeGrapesJS(container, assetManager) {
         const css = editor.Css;
         css.clear();
     });
-    
-    /* editor.on('component:update', (component) => {
-        if(component.getClasses().includes('gjs-selected')) {
-            console.log('component0');
-            console.log(component);
-            component.removeClass('gjs-selected');
-        }
-    });*/
 
     editor.on('component:selected', (component) => {
-        console.log('component');
-        console.log(component);
         component.removeClass('gjs-selected');
+        const sm = editor.StyleManager;
+        const sector = sm.getSector('tailwind_utils');
+        if (!sector) return;
+
+        const isCustomButton = component?.get('attributes')?.id === 'btn';
+        
+        // Toggle visibility
+        sector.set('visible', isCustomButton);
+        sector.set('open', isCustomButton); // Optional: auto-expand
       });
       
       editor.on('component:toggled', () => {
@@ -146,6 +145,8 @@ function addCustomStyleManagerProperties(editor) {
     editor.on('load', () => {
         const sm = editor.StyleManager;
 
+        sm.getSectors().reset();
+
         const styleManagerPanelId = 'styles'; // Default ID of the Style Manager panel
         editor.Panels.removePanel(styleManagerPanelId);
 
@@ -206,9 +207,11 @@ function setupComponentUpdateListeners(editor) {
     const TEXT_COLOR_PROP = 'tailwind-text-class';
     const BG_COLOR_PROP = 'tailwind-bg-class';
 
-    editor.on('component:selected', (component) => {
-        if (component && component.el) {
-        component.el.classList.remove('gjs-selected');
+    editor.on('component:update', (component, a) => {
+        if(component.getClasses().includes('gjs-selected')) {
+            setTimeout(() => {
+                component.removeClass('gjs-selected');
+            }, 0);
         }
     });
 

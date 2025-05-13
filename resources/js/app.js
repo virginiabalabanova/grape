@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '_token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
         });
+
         addCustomBlocks(editor);
         addCustomStyleManagerProperties(editor);
         setupComponentUpdateListeners(editor);
@@ -33,9 +34,43 @@ function initializeGrapesJS(container, assetManager) {
         width: 'auto',
         storageManager: false,
         assetManager: assetManager,
+        canvas: {
+            styles: [
+              'https://grape.test:5176/resources/css/app.css',
+            ]
+        },
         // Load basic blocks , gjsForms, grapesjsTailwind
-        plugins: [basicBlocks, grapesjsTailwind],
+        plugins: [basicBlocks],
     });
+
+    editor.on('project:get', ({ project }) => {
+        const css = editor.Css;
+        css.clear();
+    });
+    
+    /* editor.on('component:update', (component) => {
+        if(component.getClasses().includes('gjs-selected')) {
+            console.log('component0');
+            console.log(component);
+            component.removeClass('gjs-selected');
+        }
+    });*/
+
+    editor.on('component:selected', (component) => {
+        console.log('component');
+        console.log(component);
+        component.removeClass('gjs-selected');
+      });
+      
+      editor.on('component:toggled', () => {
+        const selectedComponents = editor.getSelectedAll();
+        selectedComponents.forEach(component => {
+          console.log('component2');
+          console.log(component);
+          component.removeClass('gjs-selected');
+        });
+      });
+
     return editor;
 }
 
@@ -43,7 +78,7 @@ function addCustomBlocks(editor) {
     editor.BlockManager.add('custom-button', {
         label: 'Custom Button',
         category: 'Custom',
-        content: '<a class="btn btn-primary" href="#">Click me</a>',
+        content: '<a id="btn" href="#">Click me</a>',
     });
 }
 
@@ -111,8 +146,11 @@ function addCustomStyleManagerProperties(editor) {
     editor.on('load', () => {
         const sm = editor.StyleManager;
 
+        const styleManagerPanelId = 'styles'; // Default ID of the Style Manager panel
+        editor.Panels.removePanel(styleManagerPanelId);
+
         sm.addSector('tailwind_utils', {
-        name: 'Tailwind Utils',
+        name: 'Button Styles',
         open: true,
         }, { at: 0 });
 
@@ -167,6 +205,12 @@ function addCustomStyleManagerProperties(editor) {
 function setupComponentUpdateListeners(editor) {
     const TEXT_COLOR_PROP = 'tailwind-text-class';
     const BG_COLOR_PROP = 'tailwind-bg-class';
+
+    editor.on('component:selected', (component) => {
+        if (component && component.el) {
+        component.el.classList.remove('gjs-selected');
+        }
+    });
 
     editor.on(`component:update:${TEXT_COLOR_PROP}`, (component) => {
         const value = component.get(TEXT_COLOR_PROP);

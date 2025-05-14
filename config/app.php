@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Theme
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the theme that will be used by the application.
+    |
+    */
+
+    'theme' => env('APP_THEME', 'default'),
 ];

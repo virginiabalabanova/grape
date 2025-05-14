@@ -27,6 +27,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
+use App\Http\Controllers\ThemeController;
+
+Route::get('/api/theme', [ThemeController::class, 'index']);
+
 require __DIR__.'/auth.php';
 
 // Page Routes (grouped for clarity)

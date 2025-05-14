@@ -1,5 +1,5 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
+//import defaultTheme from 'tailwindcss/defaultTheme';
+import themeUtilities from './resources/js/theme-utilities.js';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -22,9 +22,10 @@ export default {
             fontFamily: {
                 // Set Poppins as the default sans-serif font using a CSS variable
                 sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
-            }
+            },
+            ...themeUtilities,
         },
     },
 
-    plugins: [forms],
+   plugins: [],
 };

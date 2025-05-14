@@ -8,14 +8,11 @@
     {{-- Include base CSS (Tailwind) via Vite --}}
     @vite(['resources/css/app.css'])
 
-    {{-- Inject the CSS rendered from GrapesJS data (component-specific styles) --}}
-    @if(!empty($renderedCss))
-        <style type="text/css">
-            {!! $renderedCss !!}
-        </style>
-    @endif
+    @php
+        $theme = App\Services\ThemeService::forPage($page);
+    @endphp
 
-</head>
+    </head>
 <body class="font-sans antialiased">
 
     {{-- Output the HTML rendered from GrapesJS data --}}

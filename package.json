@@ -2,8 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "dev": "php artisan tailwind:export-theme && vite",
+        "build": "php artisan tailwind:export-theme && vite build"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.0.7",
@@ -21,6 +21,7 @@
         "lightningcss-linux-x64-gnu": "^1.29.1"
     },
     "devDependencies": {
+        "@tailwindcss/postcss": "^4.1.6",
         "autoprefixer": "^10.4.21",
         "grapesjs": "^0.22.7",
         "grapesjs-preset-webpage": "^1.0.3",

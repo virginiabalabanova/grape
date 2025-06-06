@@ -4,6 +4,7 @@ namespace App\Support;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Models\ThemeCustomization;
 
 class GrapesRenderer
 {
@@ -201,6 +202,16 @@ class GrapesRenderer
         }
         if (!is_array($styles)) return '';
 
+        $themeId = session('theme', 'default');
+        $themeCustomizations = ThemeCustomization::where('theme_id', $themeId)->get();
+
+        $themeStyles = "<style>\n";
+        foreach ($themeCustomizations as $themeCustomization) {
+            $themeStyles .= ".{$themeCustomization->key} {\n";
+            $themeStyles .= "  @apply {$themeCustomization->value};\n";
+            $themeStyles .= "}\n";
+        }
+        $themeStyles .= "</style>\n";
 
         $cssString = '';
         foreach ($styles as $styleRule) {

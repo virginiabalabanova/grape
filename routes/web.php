@@ -5,6 +5,7 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Http\Controllers\PageController;
 use App\Livewire\PageEditor;
+use App\Livewire\ThemeCustomizer; // Import the ThemeCustomizer Livewire component
 // Removed duplicate imports for Appearance, Password, Profile
 use App\Models\Page;
 use Illuminate\Http\Request;
@@ -41,6 +42,8 @@ Route::middleware(['auth'])->prefix('pages')->name('pages.')->group(function () 
     // Route::post('/', [PageController::class, 'store'])->name('store'); // Removed - Handled by PageEditor component
     Route::delete('/{page}', [PageController::class, 'destroy'])->name('destroy');
 });
+
+Route::middleware(['auth'])->get('/theme-editor', ThemeCustomizer::class)->name('theme-editor');
 
 
 use App\Support\GrapesRenderer; // Import the renderer

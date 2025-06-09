@@ -5,32 +5,46 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\ThemeCustomization;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\Process;
 
 class CompileThemeCss extends Command
 {
-    protected $signature = 'theme:compile-css {theme=default}';
-    protected $description = 'Generate Tailwind CSS @apply rules from theme_customizations DB';
+    protected $signature = 'theme:compile';
+    protected $description = 'Compile theme CSS from database';
 
     public function handle()
     {
-        $theme = $this->argument('theme');
-        $customizations = ThemeCustomization::where('theme_id', $theme)->get();
+        $themeId = config('theme.active', 'default');
+        $customizations = ThemeCustomization::where('theme_id', $themeId)->get();
 
-        if ($customizations->isEmpty()) {
-            $this->warn("No theme styles found for theme: $theme");
-            return;
+        $cssContent = "@reference 'tailwindcss';\n";
+        foreach ($customizations as $customization) {
+            $cssContent .= ".{$customization->key} {\n";
+            $cssContent .= "  @apply {$customization->value};\n";
+            $cssContent .= "}\n";
         }
 
-        $output = "/* Auto-generated theme.css */\n\n";
-        foreach ($customizations as $item) {
-            $output .= ".{$item->key} {\n";
-            $output .= "    @apply {$item->value};\n";
-            $output .= "}\n\n";
+        $tempCssPath = storage_path('app/theme-source.css');
+        File::put($tempCssPath, $cssContent);
+
+        $publicCssPath = public_path('dynamic-theme.css');
+
+        $process = new Process([
+            'npx',
+            '@tailwindcss/cli',
+            '-i',
+            $tempCssPath,
+            '-o',
+            $publicCssPath,
+        ]);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            $this->error($process->getErrorOutput());
+        } else {
+            $this->info('Theme CSS compiled successfully!');
         }
 
-        $path = resource_path("css/theme.css");
-        File::put($path, $output);
-
-        $this->info("Generated CSS for theme [$theme] at: resources/css/theme.css");
+        File::delete($tempCssPath);
     }
 }

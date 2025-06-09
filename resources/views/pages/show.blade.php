@@ -14,6 +14,7 @@
             {!! $renderedCss !!}
         </style>
     @endif
+    <link rel="stylesheet" href="dynamic-theme.css" />
 </head>
 <body class="font-sans antialiased">
     {{-- Output the HTML rendered from GrapesJS data --}}

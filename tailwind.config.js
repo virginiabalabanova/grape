@@ -21,9 +21,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                // Set Poppins as the default sans-serif font using a CSS variable
                 sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
-            }
+            },
         },
     },
 

@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
-@import '../css/theme.css';
 
 /* Import GrapesJS CSS scoped within its container and a layer */
 #gjs-container { /* Scope to the container ID */

@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
+@import '../css/theme.css';
 
 /* Import GrapesJS CSS scoped within its container and a layer */
 #gjs-container { /* Scope to the container ID */
@@ -74,15 +75,3 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
-
-.btn-primary {
-    @apply bg-blue-500 text-white px-4 py-2 rounded;
-}
-
-.btn-secondary {
-    @apply bg-gray-500 text-white px-4 py-2 rounded;
-}
-
-.btn-outline {
-    @apply bg-transparent border border-gray-500 text-gray-500 px-4 py-2 rounded;
-}

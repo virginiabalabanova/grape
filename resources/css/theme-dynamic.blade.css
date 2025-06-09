@@ -1,0 +1,13 @@
+@php
+dd('here');
+    $theme = session('theme', 'default');
+    $customizations = \App\Models\ThemeCustomization::where('theme_id', $theme)->get();
+@endphp
+
+<style>
+@foreach($customizations as $key => $item)
+.{{ $item->key }} {
+    @apply {{ $item->value }};
+}
+@endforeach
+</style>

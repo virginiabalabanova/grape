@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
+use App\Services\ThemeService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(ThemeService::class, function ($app) {
+            return new ThemeService();
+        });
     }
 
     /**
@@ -19,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Blade::directive('theme', function ($expression) {
+            return "<?php echo app(\\App\\Services\\ThemeManager::getClass($expression)); ?>";
+        });
+        Blade::directive('themeClass', function ($expression) {
+            return "<?php echo \\App\\Services\\ThemeManager::getClass($expression); ?>";
+        });
     }
 }

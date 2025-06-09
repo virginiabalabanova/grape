@@ -14,10 +14,8 @@
             {!! $renderedCss !!}
         </style>
     @endif
-
 </head>
 <body class="font-sans antialiased">
-
     {{-- Output the HTML rendered from GrapesJS data --}}
     @if(!empty($renderedHtml))
         {!! $renderedHtml !!}

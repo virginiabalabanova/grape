@@ -36,7 +36,7 @@ function initializeGrapesJS(container, assetManager) {
         assetManager: assetManager,
         canvas: {
             styles: [
-              'https://grape.test:5176/resources/css/app.css',
+              'https://grape.test:5175/resources/css/app.css',
             ]
         },
         // Load basic blocks , gjsForms, grapesjsTailwind

@@ -2,7 +2,22 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
+
+        
     </head>
+    <body class="min-h-screen bg-white dark:bg-zinc-800">
+        @php
+            $theme = session('theme', 'default');
+            $customizations = \App\Models\ThemeCustomization::where('theme_id', $theme)->get()->keyBy('key');
+        @endphp
+
+        <style>
+        @foreach($customizations as $key => $item)
+        .{{ $key }} {
+            {{ implode('; ', collect(explode(' ', $item->value))->map(fn($class) => "@apply $class")->toArray()) }};
+        }
+        @endforeach
+        </style>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
@@ -129,6 +144,19 @@
 
         {{ $slot }}
 
+        @fluxScripts
+        @php
+            $theme = session('theme', 'default');
+            $customizations = \App\Models\ThemeCustomization::where('theme_id', $theme)->get()->keyBy('key');
+        @endphp
+
+                <style>
+        @foreach($customizations as $key => $item)
+        .{{ $key }} {
+            {{ implode('; ', collect(explode(' ', $item->value))->map(fn($class) => "@apply $class")->toArray()) }};
+        }
+        @endforeach
+        </style>
         @fluxScripts
         @stack('scripts') {{-- Add stack for additional page-specific scripts --}}
     </body>

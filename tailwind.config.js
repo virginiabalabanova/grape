@@ -14,9 +14,10 @@ export default {
         './vendor/wire-elements/spotlight/resources/views/*.blade.php',
         './vendor/wireui/wireui/resources/**/*.blade.php',
         './vendor/wireui/wireui/ts/**/*.ts',
-        './vendor/wireui/wireui/src/View/**/*.php'
+        './vendor/wireui/wireui/src/View/**/*.php',
+        './resources/views/**/*.blade.php',
+        './resources/css/**/*.blade.css',
     ],
-
     theme: {
         extend: {
             fontFamily: {

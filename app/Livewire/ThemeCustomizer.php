@@ -12,8 +12,13 @@ class ThemeCustomizer extends Component
     public $key;
     public $value;
     public $customizations = [];
-    private $requiredKeys = ['btn-primary', 'body-background', 'text-color'];
     public $styleValues = [];
+
+    private $requiredKeys = [
+        'btn-primary', 
+        'body-background', 
+        'text-color'
+    ];
 
     public $categories = [
         'global' => ['body-background', 'text-color'],
@@ -24,34 +29,46 @@ class ThemeCustomizer extends Component
 
     public function mount()
     {
-        $this->loadCustomizations();
+        $this->customizations = $this->loadCustomizations();
         $this->ensureRequiredKeysExist();
         $this->initializeStyleValues();
     }
 
+    private function loadCustomizations()
+    {
+        return ThemeCustomization::where('theme_id', $this->theme)->get()->groupBy(function ($item) {
+            // Assign category based on known keys, fallback to 'global'
+            foreach ($this->categories as $category => $keys) {
+                if (in_array($item->key, $keys)) {
+                    return $category;
+                }
+            }
+            return 'other';
+        })->toArray();
+    }
+
     private function ensureRequiredKeysExist()
     {
-        $existingKeys = Arr::flatten(Arr::pluck($this->loadCustomizations(), 'key'));
+        $existingKeys = ThemeCustomization::where('theme_id', $this->theme)->pluck('key')->toArray();
         $missingKeys = array_diff($this->requiredKeys, $existingKeys);
 
         foreach ($missingKeys as $key) {
             ThemeCustomization::create([
                 'theme_id' => $this->theme,
                 'key' => $key,
-                'value' => '', // You might want to set a default value here
+                'value' => '',
             ]);
         }
 
-        $this->loadCustomizations();
+        $this->customizations = $this->loadCustomizations();
     }
 
     private function initializeStyleValues()
     {
         $this->styleValues = [];
-        foreach ($this->customizations as $category => $customizations) {
-            foreach ($customizations as $customization) {
-                $customization = (object) $customization;
-                $this->styleValues[$customization->id] = $customization->value;
+        foreach ($this->customizations as $category => $styles) {
+            foreach ($styles as $customization) {
+                $this->styleValues[$customization['id']] = $customization['value'];
             }
         }
     }
@@ -59,22 +76,23 @@ class ThemeCustomizer extends Component
     public function switchTheme($theme)
     {
         $this->theme = $theme;
-        $this->loadCustomizations();
+        $this->customizations = $this->loadCustomizations();
         $this->initializeStyleValues();
     }
 
-    private function loadCustomizations()
+    public function updateAllStyles($category)
     {
-        $this->customizations = ThemeCustomization::where('theme_id', $this->theme)->get()->groupBy(function ($item) {
-            foreach ($this->categories as $category => $keys) {
-                if (in_array($item->key, $keys)) {
-                    return $category;
-                }
+        foreach ($this->customizations[$category] as $customization) {
+            $model = ThemeCustomization::find($customization['id']);
+            if ($model) {
+                $model->value = $this->styleValues[$model->id] ?? '';
+                $model->save();
             }
-            return 'global'; // Default category
-        })->toArray();
+        }
 
-        return ThemeCustomization::where('theme_id', $this->theme)->get()->toArray();
+        session()->flash('message', ucfirst($category) . ' styles updated successfully.');
+        $this->customizations = $this->loadCustomizations();
+        $this->initializeStyleValues();
     }
 
     public function addStyle()
@@ -96,33 +114,20 @@ class ThemeCustomizer extends Component
         ]);
 
         $this->resetInputFields();
-        $this->loadCustomizations();
+        $this->customizations = $this->loadCustomizations();
         $this->initializeStyleValues();
     }
 
     public function deleteStyle($id)
     {
         $customization = ThemeCustomization::find($id);
-        if (in_array($customization->key, $this->requiredKeys)) {
+        if ($customization && in_array($customization->key, $this->requiredKeys)) {
             session()->flash('message', 'Cannot delete a required key.');
             return;
         }
 
         ThemeCustomization::destroy($id);
-        $this->loadCustomizations();
-        $this->initializeStyleValues();
-    }
-
-    public function updateAllStyles($category)
-    {
-        foreach ($this->customizations[$category] as $customization) {
-            $customization = ThemeCustomization::find($customization['id']);
-            $customization->value = $this->styleValues[$customization->id];
-            $customization->save();
-        }
-
-        session()->flash('message', ucfirst($category) . ' styles updated successfully.');
-        $this->loadCustomizations();
+        $this->customizations = $this->loadCustomizations();
         $this->initializeStyleValues();
     }
 

@@ -31,6 +31,7 @@
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                     {{-- Add Pages Link --}}
                     <flux:navlist.item icon="document-text" :href="route('pages.index')" :current="request()->routeIs('pages.*')" wire:navigate>{{ __('Pages') }}</flux:navlist.item>
+                    <flux:navlist.item icon="paint-brush" :href="route('theme-editor')" :current="request()->routeIs('theme-editor')" wire:navigate>{{ __('Theme Editor') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 

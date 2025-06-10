@@ -11,8 +11,8 @@
     </div>
 
     @foreach ($customizations as $category => $styles)
-        <div class="mb-8">
-            <h3 class="text-xl font-semibold mb-4">{{ ucfirst($category) }} Styles</h3>
+        <div class="mb-8 -ml-4">
+            <h3 class="text-xl font-semibold mb-4 ml-4">{{ ucfirst($category) }} Styles</h3>
 
             <div class="grid grid-cols-3 gap-4 mb-2">
                 <div class="w-1/5 px-4" style="width: 250px;">Key</div>
@@ -26,7 +26,7 @@
                         $customization = (object) $customization;
                     @endphp
                     <li class="flex justify-end mb-4 items-start">
-                        <div class="w-1/4 px-4" style="width: 250px;">
+                        <div class="w-1/4 px-4 w-250px">
                             @if(in_array($customization->key, $this->requiredKeys))
                                 <span class="block text-gray-500 py-2">{{ $customization->key }}</span>
                             @else
@@ -37,30 +37,28 @@
                             <input type="text" wire:model="styleValues.{{ $customization->id }}" id="value-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
                         @if(!in_array($customization->key, $this->requiredKeys))
-                            <div class="ml-auto px-4">
+                            <div class="ml-auto pl-4 w-250px">
                                 <button wire:click="deleteStyle({{ $customization->id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">-</button>
                             </div>
                         @else
-                            <div class="ml-auto px-4" style="width: 70px;"></div>
+                            <div class="ml-auto pl-4" style="width: 70px;"></div>
                         @endif
                     </li>
                 @endforeach
-            </ul>
-
-            {{-- New Style Input --}}
-            <div class="flex justify-end mb-4 items-start">
-                <div class="w-1/4 px-4">
-                    <input type="text" wire:model="key" id="newKey-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    @error('key') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-                <div class="flex-grow px-4">
-                    <input type="text" wire:model="value" id="newValue-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    @error('value') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-                <div class="ml-auto px-4 pt-6">
-                    <button wire:click="addStyle" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">+</button>
-                </div>
-            </div>
+                <li class="flex justify-end mb-4 items-start">
+                    <div class="w-1/4 px-4">
+                        <input type="text" wire:model="key" id="newKey-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        @error('key') <span class="text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="flex-grow px-4">
+                        <input type="text" wire:model="value" id="newValue-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        @error('value') <span class="text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="ml-auto pl-4">
+                        <button wire:click="addStyle" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">+</button>
+                    </div>
+                </li>
+</ul>
 
             <div class="flex justify-end">
                 <button wire:click="updateAllStyles('{{ $category }}')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">

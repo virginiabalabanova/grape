@@ -34,28 +34,39 @@
 
         <div>
             <h2 class="text-xl font-bold mb-2">Current Styles</h2>
-            <ul>
-                @foreach ($customizations as $customization)
-                    <li class="mb-2 p-2 border rounded flex justify-between items-center">
-                        @if ($editingKey === $customization->key)
+            @foreach ($customizations as $category => $styles)
+                <h3 class="text-lg font-semibold mb-2">{{ ucfirst($category) }}</h3>
+                <div class="flex items-center mb-2">
+                    <div class="w-1/4 mr-2">Key</div>
+                    <div class="flex-grow mr-2">Value</div>
+                    <div></div>
+                </div>
+                <ul>
+                    @foreach ($styles as $customization)
+                        @php
+                            $customization = (object) $customization;
+                        @endphp
+                        <li class="p-2 border rounded flex items-center mb-4">
+                            <div class="w-1/4">
+                                @if(in_array($customization->key, $this->requiredKeys))
+                                    <span class="block text-gray-500">{{ $customization->key }}</span>
+                                @else
+                                    <input type="text" id="key-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{ $customization->key }}" disabled>
+                                @endif
+                            </div>
                             <div class="flex-grow">
-                                <label for="editingKey" class="block text-gray-700 text-sm font-bold mb-2">Key:</label>
-                                <input type="text" wire:model="editingKey" id="editingKey" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                <label for="editingValue" class="block text-gray-700 text-sm font-bold mb-2">Value:</label>
-                                <input type="text" wire:model="editingValue" id="editingValue" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                <button wire:click="updateStyle({{ $customization->id }})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update</button>
-                                <button wire:click="cancelEdit" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancel</button>
+                                <input type="text" wire:model="styleValues.{{ $customization->id }}" id="value-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                             </div>
-                        @else
-                            <span class="flex-grow">{{ $customization->key }}: {{ $customization->value }}</span>
-                            <div>
-                                <button wire:click="editStyle({{ $customization->id }})" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">Edit</button>
-                                <button wire:click="deleteStyle({{ $customization->id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
-                            </div>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
+                            @if(!in_array($customization->key, $this->requiredKeys))
+                                <div class="ml-auto">
+                                    <button wire:click="deleteStyle({{ $customization->id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
+                                </div>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+                <button wire:click="updateAllStyles('{{ $category }}')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update All {{ ucfirst($category) }} Styles</button>
+            @endforeach
         </div>
     </div>
 </div>

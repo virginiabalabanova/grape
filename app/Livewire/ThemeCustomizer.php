@@ -14,21 +14,34 @@ class ThemeCustomizer extends Component
     public $customizations = [];
     public $styleValues = [];
 
-    private $requiredKeys = [
-        'btn-primary', 
-        'body-background', 
-        'text-color'
-    ];
+    private $requiredKeys = []; // Will be populated dynamically
 
-    public $categories = [
-        'global' => ['body-background', 'text-color'],
-        'button' => ['btn-primary'],
-        'header' => [],
-        'structural' => [],
-    ];
+    public $categories = []; // Will be populated dynamically
+
+    private function loadRequiredKeys()
+    {
+        $this->requiredKeys = ThemeCustomization::where('theme_id', $this->theme)
+            ->where('required', true)
+            ->pluck('key')
+            ->toArray();
+    }
+
+    private function loadCategories()
+    {
+        $categories = ThemeCustomization::where('theme_id', $this->theme)->get();
+        $this->categories = [];
+        foreach ($categories as $category) {
+            if (!isset($this->categories[$category->category])) {
+                $this->categories[$category->category] = [];
+            }
+            $this->categories[$category->category][] = $category->key;
+        }
+    }
 
     public function mount()
     {
+        $this->loadRequiredKeys();
+        $this->loadCategories();
         $this->customizations = $this->loadCustomizations();
         $this->ensureRequiredKeysExist();
         $this->initializeStyleValues();
@@ -37,9 +50,9 @@ class ThemeCustomizer extends Component
     private function loadCustomizations()
     {
         return ThemeCustomization::where('theme_id', $this->theme)->get()->groupBy(function ($item) {
-            // Assign category based on known keys, fallback to 'global'
+            // Assign category based on known categories
             foreach ($this->categories as $category => $keys) {
-                if (in_array($item->key, $keys)) {
+                if ($item->category == $category) {
                     return $category;
                 }
             }
@@ -76,6 +89,8 @@ class ThemeCustomizer extends Component
     public function switchTheme($theme)
     {
         $this->theme = $theme;
+        $this->loadRequiredKeys();
+        $this->loadCategories();
         $this->customizations = $this->loadCustomizations();
         $this->initializeStyleValues();
     }

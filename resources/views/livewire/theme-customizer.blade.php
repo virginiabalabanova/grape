@@ -50,12 +50,10 @@
             {{-- New Style Input --}}
             <div class="flex justify-end mb-4 items-start">
                 <div class="w-1/4 px-4">
-                    <label for="newKey-{{ $category }}" class="block text-gray-700 text-sm font-bold mb-2">Key:</label>
                     <input type="text" wire:model="key" id="newKey-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     @error('key') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div class="flex-grow px-4">
-                    <label for="newValue-{{ $category }}" class="block text-gray-700 text-sm font-bold mb-2">Value:</label>
                     <input type="text" wire:model="value" id="newValue-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     @error('value') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>

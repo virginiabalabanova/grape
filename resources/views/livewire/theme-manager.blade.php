@@ -30,12 +30,29 @@
         </form>
     </div>
 
+    @if($isEditing)
+    <div class="mb-4" x-data="{ selectedColors: @entangle('selectedColors') }">
+        <h3 class="text-lg font-semibold mb-2">Assign Colors</h3>
+        <div class="flex flex-wrap gap-2">
+            @foreach($allColors as $color)
+                <div wire:click="toggleColor({{ $color->id }})"
+                     class="w-8 h-8 rounded-full cursor-pointer transition-transform transform hover:scale-110 border-2"
+                     :class="selectedColors.includes({{ $color->id }}) ? 'border-blue-500' : 'border-gray-200'"
+                     style="background-color: {{ $color->hex }};"
+                     title="{{ \Illuminate\Support\Str::title($color->name) }}">
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
+
     <table class="table-auto w-full">
         <thead>
             <tr>
                 <th class="px-4 py-2">Name</th>
                 <th class="px-4 py-2">Primary Font</th>
                 <th class="px-4 py-2">Secondary Font</th>
+                <th class="px-4 py-2">Colors</th>
                 <th class="px-4 py-2">Actions</th>
             </tr>
         </thead>
@@ -45,6 +62,13 @@
                     <td class="border px-4 py-2">{{ $theme->name }}</td>
                     <td class="border px-4 py-2">{{ $theme->font_primary }}</td>
                     <td class="border px-4 py-2">{{ $theme->font_secondary }}</td>
+                    <td class="border px-4 py-2">
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($theme->colors as $color)
+                                <div class="w-6 h-6 rounded-full" style="background-color: {{ $color->hex }};" title="{{ $color->name }}"></div>
+                            @endforeach
+                        </div>
+                    </td>
                     <td class="border px-4 py-2">
                         <button wire:click="editTheme({{ $theme->id }})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">Edit</button>
                         <button wire:click="deleteTheme({{ $theme->id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>

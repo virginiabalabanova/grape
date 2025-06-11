@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Theme;
+use App\Models\ThemeColor;
 
 class ThemeManager extends Component
 {
@@ -13,20 +14,59 @@ class ThemeManager extends Component
     public $font_secondary;
     public $selectedThemeId;
     public $isEditing = false;
+    public $allColors;
+    public $selectedColors = [];
 
     public function mount()
     {
         $this->loadThemes();
+        $this->allColors = ThemeColor::all();
     }
 
     public function loadThemes()
     {
-        $this->themes = Theme::all();
+        $this->themes = Theme::with('colors')->get();
     }
 
     public function render()
     {
         return view('livewire.theme-manager');
+    }
+
+    public function editTheme($themeId)
+    {
+        $theme = Theme::with('colors')->find($themeId);
+        $this->selectedThemeId = $theme->id;
+        $this->name = $theme->name;
+        $this->font_primary = $theme->font_primary;
+        $this->font_secondary = $theme->font_secondary;
+        $this->selectedColors = $theme->colors->pluck('id')->toArray();
+        $this->isEditing = true;
+    }
+
+    public function deleteTheme($themeId)
+    {
+        Theme::find($themeId)->delete();
+        $this->loadThemes();
+    }
+
+    public function resetForm()
+    {
+        $this->name = '';
+        $this->font_primary = '';
+        $this->font_secondary = '';
+        $this->selectedThemeId = null;
+        $this->selectedColors = [];
+        $this->isEditing = false;
+    }
+
+    public function toggleColor($colorId)
+    {
+        if (in_array($colorId, $this->selectedColors)) {
+            $this->selectedColors = array_diff($this->selectedColors, [$colorId]);
+        } else {
+            $this->selectedColors[] = $colorId;
+        }
     }
 
     public function saveTheme()
@@ -46,36 +86,13 @@ class ThemeManager extends Component
         if ($this->isEditing) {
             $theme = Theme::find($this->selectedThemeId);
             $theme->update($data);
+            $theme->colors()->sync($this->selectedColors);
         } else {
-            Theme::create($data);
+            $theme = Theme::create($data);
+            $theme->colors()->sync($this->selectedColors);
         }
 
         $this->resetForm();
         $this->loadThemes();
-    }
-
-    public function editTheme($themeId)
-    {
-        $theme = Theme::find($themeId);
-        $this->selectedThemeId = $theme->id;
-        $this->name = $theme->name;
-        $this->font_primary = $theme->font_primary;
-        $this->font_secondary = $theme->font_secondary;
-        $this->isEditing = true;
-    }
-
-    public function deleteTheme($themeId)
-    {
-        Theme::find($themeId)->delete();
-        $this->loadThemes();
-    }
-
-    public function resetForm()
-    {
-        $this->name = '';
-        $this->font_primary = '';
-        $this->font_secondary = '';
-        $this->selectedThemeId = null;
-        $this->isEditing = false;
     }
 }

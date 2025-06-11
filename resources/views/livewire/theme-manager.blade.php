@@ -31,20 +31,19 @@
     </div>
 
     @if($isEditing)
-    <div class="mb-4" x-data="{ selectedColors: @entangle('selectedColors') }">
-        <h3 class="text-lg font-semibold mb-2">Assign Colors</h3>
-        <div class="flex flex-wrap gap-2">
-            @foreach($allColors as $color)
-                <div wire:click="toggleColor({{ $color->id }})"
-                     class="w-8 h-8 rounded-full cursor-pointer transition-transform transform hover:scale-110 border-2"
-                     :class="selectedColors.includes({{ $color->id }}) ? 'border-blue-500' : 'border-gray-200'"
-                     style="background-color: {{ $color->hex }};"
-                     title="{{ \Illuminate\Support\Str::title($color->name) }}">
-                </div>
-            @endforeach
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold mb-2">Assign Colors</h3>
+            <div class="flex flex-wrap gap-4">
+                @foreach($allColors as $color)
+                    <div wire:click="toggleColor({{ $color->id }})"
+                         class="w-10 h-10 rounded-full cursor-pointer transition-transform transform hover:scale-110 @if(in_array($color->id, $selectedColors)) ring-2 ring-offset-2 ring-black @endif"
+                         style="background-color: {{ $color->hex }};"
+                         title="{{ \Illuminate\Support\Str::title($color->name) }}">
+                    </div>
+                @endforeach
+            </div>
         </div>
-    </div>
-@endif
+    @endif
 
     <table class="table-auto w-full">
         <thead>

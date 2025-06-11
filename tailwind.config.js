@@ -18,6 +18,14 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/css/**/*.blade.css',
     ],
+    safelist: [
+        'border-blue-500',
+        'border-gray-300',
+        'ring-2',
+        'ring-offset-2',
+        'ring-blue-500',
+        'ring-black',
+    ],
     theme: {
         extend: {
             fontFamily: {

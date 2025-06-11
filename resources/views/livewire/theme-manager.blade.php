@@ -1,7 +1,7 @@
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold">Manage Themes</h2>
-        <a href="/theme-editor" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <a href="/theme-editor" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009ddc; letter-spacing: 0.05em;">
             Theme Editor
         </a>
     </div>
@@ -30,8 +30,8 @@
                         </div>
                     </td>
                     <td class="border px-4 py-2">
-                        <button wire:click="editTheme({{ $theme->id }})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">Edit</button>
-                        <button wire:click="deleteTheme({{ $theme->id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
+                        <button wire:click="editTheme({{ $theme->id }})" class="text-white py-1 px-2 rounded text-sm" style="background-color: #009b72; letter-spacing: 0.05em;">Edit</button>
+                        <button wire:click="deleteTheme({{ $theme->id }})" class="text-white py-1 px-2 rounded text-sm" style="background-color: #f26430; letter-spacing: 0.05em;">Delete</button>
                     </td>
                 </tr>
             @endforeach
@@ -56,16 +56,16 @@
                         @error('font_secondary') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
                 </div>
-                <div class="flex items-center mt-4">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Update Theme
-                    </button>
-                    <button wire:click="resetForm" type="button" class="ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            <div class="flex items-center mt-4">
+                <button type="submit" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009ddc; letter-spacing: 0.05em;">
+                    {{ $isEditing ? 'Update Theme' : 'Create Theme' }}
+                </button>
+                @if($isEditing)
+                    <button wire:click="resetForm" type="button" class="ml-2 text-white py-2 px-4 rounded text-sm" style="background-color: #2a2d34; letter-spacing: 0.05em;">
                         Cancel
                     </button>
-                </div>
-            </form>
-        </div>
+                @endif
+            </div>
 
         <div class="mt-8">
             <h3 class="text-lg font-semibold mb-2">Assign Colors</h3>
@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="flex items-center mt-4">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009ddc; letter-spacing: 0.05em;">
                         Create Theme
                     </button>
                 </div>

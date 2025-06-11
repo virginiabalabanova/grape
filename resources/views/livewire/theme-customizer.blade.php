@@ -1,7 +1,7 @@
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold">Theme Customizer</h2>
-        <a href="/themes" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <a href="/themes" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009ddc; letter-spacing: 0.05em;">
             Manage Themes
         </a>
     </div>
@@ -13,10 +13,13 @@
                 <option value="{{ $theme['id'] }}">{{ $theme['name'] }}</option>
             @endforeach
         </select>
-        <div class="flex mt-2">
-            @if($selectedTheme = collect($themes)->firstWhere('id', $theme))
+        <div class="flex my-4">
+            @if($selectedTheme = collect($themes)->firstWhere('id', $this->theme))
                 @foreach($selectedTheme['colors'] as $color)
-                    <div class="w-6 h-6 rounded-full mr-2" style="background-color: {{ $color['hex'] }};" title="{{ $color['name'] }}"></div>
+                    <div class="flex items-center mr-4">
+                        <div class="w-6 h-6 rounded-full mr-2" style="background-color: {{ $color['hex'] }};" title="{{ $color['name'] }}"></div>
+                        <span>{{ $color['name'] }}</span>
+                    </div>
                 @endforeach
             @endif
         </div>
@@ -24,7 +27,7 @@
 
 
     @foreach ($customizations as $category => $styles)
-        <div class="mb-8 -ml-4">
+        <div class="mb-8 -ml-4 mt-8">
             <h3 class="text-xl font-semibold mb-4 ml-4">{{ ucfirst($category) }} Styles</h3>
 
             <div class="grid grid-cols-3 gap-4 mb-2">
@@ -51,7 +54,7 @@
                         </div>
                         @if(!in_array($customization->key, $this->requiredKeys))
                             <div class="ml-auto pl-4 w-250px">
-                                <button wire:click="deleteStyle({{ $customization->id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">-</button>
+                                <button wire:click="deleteStyle({{ $customization->id }})" class="text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="background-color: #f26430; letter-spacing: 0.05em;">-</button>
                             </div>
                         @else
                             <div class="ml-auto pl-4" style="width: 70px;"></div>
@@ -68,13 +71,13 @@
                         @error('value') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
                     <div class="ml-auto pl-4">
-                        <button wire:click="addStyle" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">+</button>
+                        <button wire:click="addStyle" class="text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="background-color: #009ddc; letter-spacing: 0.05em;">+</button>
                     </div>
                 </li>
 </ul>
 
             <div class="flex justify-end">
-                <button wire:click="updateAllStyles('{{ $category }}')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <button wire:click="updateAllStyles('{{ $category }}')" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009b72; letter-spacing: 0.05em;">
                     Update All {{ ucfirst($category) }} Styles
                     <span wire:loading wire:target="updateAllStyles('{{ $category }}')">
                         Updating...

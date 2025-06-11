@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('theme_colors');
-        Schema::create('theme_colors', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('hex');
+        Schema::create('theme_theme_color', function (Blueprint $table) {
+            $table->foreignId('theme_id')->constrained()->onDelete('cascade');
+            $table->foreignId('theme_color_id')->constrained()->onDelete('cascade');
+            $table->primary(['theme_id', 'theme_color_id']);
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('theme_colors');
+        Schema::dropIfExists('theme_theme_color');
     }
 };

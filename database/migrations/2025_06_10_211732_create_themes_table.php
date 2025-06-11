@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('theme_colors');
-        Schema::create('theme_colors', function (Blueprint $table) {
+        Schema::create('themes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('hex');
+            $table->string('font_primary');
+            $table->string('font_secondary');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('theme_colors');
+        Schema::dropIfExists('themes');
     }
 };

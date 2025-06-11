@@ -4,11 +4,12 @@
     <div class="mb-4">
         <label for="theme" class="block text-gray-700 text-sm font-bold mb-2">Select Theme:</label>
         <select wire:model="theme" id="theme" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" wire:change="switchTheme($event.target.value)">
-            <option value="default">Default</option>
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
+            @foreach($themes as $theme)
+                <option value="{{ $theme->id }}">{{ $theme->name }}</option>
+            @endforeach
         </select>
     </div>
+
 
     @foreach ($customizations as $category => $styles)
         <div class="mb-8 -ml-4">

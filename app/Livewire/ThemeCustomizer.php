@@ -3,12 +3,14 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Theme;
 use App\Models\ThemeCustomization;
 use Illuminate\Support\Arr;
 
 class ThemeCustomizer extends Component
 {
-    public $theme = 'default';
+    public $theme;
+    public $themes = [];
     public $key;
     public $value;
     public $customizations = [];
@@ -40,11 +42,22 @@ class ThemeCustomizer extends Component
 
     public function mount()
     {
+        $this->themes = Theme::all();
+        $defaultTheme = Theme::where('name', 'default')->first();
+        $this->theme = $defaultTheme ? $defaultTheme->id : $this->themes->first()->id;
+        
         $this->loadRequiredKeys();
         $this->loadCategories();
         $this->customizations = $this->loadCustomizations();
         $this->ensureRequiredKeysExist();
         $this->initializeStyleValues();
+
+        try {
+            $this->themes = Theme::all();
+            \Log::info('Themes loaded successfully', ['themes' => $this->themes->toArray()]);
+        } catch (\Exception $e) {
+            \Log::error('Error loading themes', ['error' => $e->getMessage()]);
+        }
     }
 
     private function loadCustomizations()
@@ -70,6 +83,7 @@ class ThemeCustomizer extends Component
                 'theme_id' => $this->theme,
                 'key' => $key,
                 'value' => '',
+                'category' => 'general',
             ]);
         }
 
@@ -86,9 +100,9 @@ class ThemeCustomizer extends Component
         }
     }
 
-    public function switchTheme($theme)
+    public function switchTheme($themeId)
     {
-        $this->theme = $theme;
+        $this->theme = $themeId;
         $this->loadRequiredKeys();
         $this->loadCategories();
         $this->customizations = $this->loadCustomizations();
@@ -126,6 +140,7 @@ class ThemeCustomizer extends Component
             'theme_id' => $this->theme,
             'key' => $this->key,
             'value' => $this->value,
+            'category' => 'general',
         ]);
 
         $this->resetInputFields();

@@ -30,6 +30,10 @@ class ThemeManager extends Component
 
     public function render()
     {
+        $this->allColors = $this->allColors->sortBy(function ($color) {
+            return array_search($color->id, $this->selectedColors) === false;
+        });
+
         return view('livewire.theme-manager');
     }
 
@@ -42,10 +46,6 @@ class ThemeManager extends Component
         $this->font_secondary = $theme->font_secondary;
         $this->selectedColors = $theme->colors->pluck('id')->toArray();
         $this->isEditing = true;
-
-        $this->allColors = $this->allColors->sortBy(function ($color) {
-            return array_search($color->id, $this->selectedColors) === false;
-        });
     }
 
     public function deleteTheme($themeId)
@@ -62,6 +62,15 @@ class ThemeManager extends Component
         $this->selectedThemeId = null;
         $this->selectedColors = [];
         $this->isEditing = false;
+    }
+
+    public function toggleColor($colorId)
+    {
+        if (in_array($colorId, $this->selectedColors)) {
+            $this->selectedColors = array_diff($this->selectedColors, [$colorId]);
+        } else {
+            $this->selectedColors[] = $colorId;
+        }
     }
 
     public function saveTheme()

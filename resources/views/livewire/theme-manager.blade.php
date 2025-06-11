@@ -31,12 +31,13 @@
     </div>
 
     @if($isEditing)
-        <div class="mb-4">
+        <div class="mb-4" x-data="{ selectedColors: @entangle('selectedColors') }">
             <h3 class="text-lg font-semibold mb-2">Assign Colors</h3>
             <div class="flex flex-wrap gap-4">
                 @foreach($allColors as $color)
-                    <div wire:click="toggleColor({{ $color->id }})"
-                         class="w-10 h-10 rounded-full cursor-pointer transition-transform transform hover:scale-110 @if(in_array($color->id, $selectedColors)) ring-2 ring-offset-2 ring-black @endif"
+                    <div @click="selectedColors.includes({{ $color->id }}) ? selectedColors.splice(selectedColors.indexOf({{ $color->id }}), 1) : selectedColors.push({{ $color->id }})"
+                         class="w-10 h-10 rounded-full cursor-pointer transition-transform transform hover:scale-110"
+                         :class="selectedColors.includes({{ $color->id }}) ? 'ring-2 ring-offset-2 ring-black' : ''"
                          style="background-color: {{ $color->hex }};"
                          title="{{ \Illuminate\Support\Str::title($color->name) }}">
                     </div>

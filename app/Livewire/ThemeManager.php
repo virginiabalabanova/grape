@@ -30,9 +30,11 @@ class ThemeManager extends Component
 
     public function render()
     {
-        $this->allColors = $this->allColors->sortBy(function ($color) {
-            return array_search($color->id, $this->selectedColors) === false;
-        });
+        if ($this->isEditing) {
+            $this->allColors = $this->allColors->sortBy(function ($color) {
+                return array_search($color->id, $this->selectedColors) === false;
+            });
+        }
 
         return view('livewire.theme-manager');
     }

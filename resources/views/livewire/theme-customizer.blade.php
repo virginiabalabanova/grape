@@ -10,9 +10,16 @@
         <label for="theme" class="block text-gray-700 text-sm font-bold mb-2">Select Theme:</label>
         <select wire:model="theme" id="theme" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" wire:change="switchTheme($event.target.value)">
             @foreach($themes as $theme)
-                <option value="{{ $theme->id }}">{{ $theme->name }}</option>
+                <option value="{{ $theme['id'] }}">{{ $theme['name'] }}</option>
             @endforeach
         </select>
+        <div class="flex mt-2">
+            @if($selectedTheme = collect($themes)->firstWhere('id', $theme))
+                @foreach($selectedTheme['colors'] as $color)
+                    <div class="w-6 h-6 rounded-full mr-2" style="background-color: {{ $color['hex'] }};" title="{{ $color['name'] }}"></div>
+                @endforeach
+            @endif
+        </div>
     </div>
 
 

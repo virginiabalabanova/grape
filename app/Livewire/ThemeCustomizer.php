@@ -42,22 +42,15 @@ class ThemeCustomizer extends Component
 
     public function mount()
     {
-        $this->themes = Theme::all();
-        $defaultTheme = Theme::where('name', 'default')->first();
-        $this->theme = $defaultTheme ? $defaultTheme->id : $this->themes->first()->id;
+        $this->themes = Theme::with('colors')->get()->toArray();
+        $defaultTheme = collect($this->themes)->where('name', 'default')->first();
+        $this->theme = $defaultTheme ? $defaultTheme['id'] : $this->themes[0]['id'];
         
         $this->loadRequiredKeys();
         $this->loadCategories();
         $this->customizations = $this->loadCustomizations();
         $this->ensureRequiredKeysExist();
         $this->initializeStyleValues();
-
-        try {
-            $this->themes = Theme::all();
-            \Log::info('Themes loaded successfully', ['themes' => $this->themes->toArray()]);
-        } catch (\Exception $e) {
-            \Log::error('Error loading themes', ['error' => $e->getMessage()]);
-        }
     }
 
     private function loadCustomizations()

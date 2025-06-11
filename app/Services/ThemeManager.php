@@ -15,8 +15,6 @@ class ThemeManager
             ->where('key', $key)
             ->first();
 
-        dd($themeCustomization);    
-
         return $themeCustomization ? $themeCustomization->value : $default;
     }
 

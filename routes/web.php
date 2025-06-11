@@ -11,6 +11,7 @@ use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage; // Added for asset uploads
+use App\Http\Controllers\ThemeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,6 +45,10 @@ Route::middleware(['auth'])->prefix('pages')->name('pages.')->group(function () 
 });
 
 Route::middleware(['auth'])->get('/theme-editor', ThemeCustomizer::class)->name('theme-editor');
+
+Route::middleware(['auth'])->prefix('themes')->name('themes.')->group(function () {
+    Route::get('/', [ThemeController::class, 'index'])->name('index');
+});
 
 
 use App\Support\GrapesRenderer; // Import the renderer

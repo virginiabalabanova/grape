@@ -11,8 +11,8 @@ class ThemeCustomizer extends Component
 {
     public $theme;
     public $themes = [];
-    public $key;
-    public $value;
+    public $newKey = [];
+    public $newValue = [];
     public $customizations = [];
     public $styleValues = [];
 
@@ -105,11 +105,7 @@ class ThemeCustomizer extends Component
     public function updateAllStyles($category)
     {
         foreach ($this->customizations[$category] as $customization) {
-            $model = ThemeCustomization::find($customization['id']);
-            if ($model) {
-                $model->value = $this->styleValues[$model->id] ?? '';
-                $model->save();
-            }
+            ThemeCustomization::where('id', $customization['id'])->update(['value' => $this->styleValues[$customization['id']]]);
         }
 
         session()->flash('message', ucfirst($category) . ' styles updated successfully.');
@@ -117,26 +113,27 @@ class ThemeCustomizer extends Component
         $this->initializeStyleValues();
     }
 
-    public function addStyle()
+    public function addStyle($category)
     {
         $this->validate([
-            'key' => 'required|string',
-            'value' => 'required|string',
+            "newKey.{$category}" => 'required|string',
+            "newValue.{$category}" => 'required|string',
         ]);
 
-        if (in_array($this->key, $this->requiredKeys)) {
+        if (in_array($this->newKey[$category], $this->requiredKeys)) {
             session()->flash('message', 'Cannot add a required key.');
             return;
         }
 
         ThemeCustomization::create([
             'theme_id' => $this->theme,
-            'key' => $this->key,
-            'value' => $this->value,
-            'category' => 'general',
+            'key' => $this->newKey[$category],
+            'value' => $this->newValue[$category],
+            'category' => $category,
+            'required' => false,
         ]);
 
-        $this->resetInputFields();
+        $this->resetInputFields($category);
         $this->customizations = $this->loadCustomizations();
         $this->initializeStyleValues();
     }
@@ -154,10 +151,10 @@ class ThemeCustomizer extends Component
         $this->initializeStyleValues();
     }
 
-    private function resetInputFields()
+    private function resetInputFields($category)
     {
-        $this->key = '';
-        $this->value = '';
+        $this->newKey[$category] = '';
+        $this->newValue[$category] = '';
     }
 
     public function render()

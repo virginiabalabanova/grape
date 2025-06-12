@@ -63,15 +63,15 @@
                 @endforeach
                 <li class="flex justify-end mb-4 items-start">
                     <div class="w-1/4 px-4">
-                        <input type="text" wire:model="key" id="newKey-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        @error('key') <span class="text-red-500">{{ $message }}</span> @enderror
+                        <input type="text" wire:model="newKey.{{ $category }}" id="newKey-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        @error("newKey.{$category}") <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex-grow px-4">
-                        <input type="text" wire:model="value" id="newValue-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        @error('value') <span class="text-red-500">{{ $message }}</span> @enderror
+                        <input type="text" wire:model="newValue.{{ $category }}" id="newValue-{{ $category }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        @error("newValue.{$category}") <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
                     <div class="ml-auto pl-4">
-                        <button wire:click="addStyle" class="text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="background-color: #009ddc; letter-spacing: 0.05em;">+</button>
+                        <button wire:click="addStyle('{{ $category }}')" class="text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="background-color: #009ddc; letter-spacing: 0.05em;">+</button>
                     </div>
                 </li>
 </ul>

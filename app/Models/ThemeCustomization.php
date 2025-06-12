@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ThemeCustomization extends Model
 {
-    protected $fillable = ['theme_id', 'key', 'value'];
+    protected $fillable = ['theme_id', 'key', 'value', 'category', 'required'];
     public $timestamps = true;
 }

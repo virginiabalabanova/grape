@@ -14,10 +14,12 @@ class CompileThemeCss extends Command
 
     public function handle()
     {
-        $themeId = config('theme.active', 'default');
+        $this->call('theme:colors');
+
+        $themeId = session('theme', 1);
         $customizations = ThemeCustomization::where('theme_id', $themeId)->get();
 
-        $cssContent = "@reference 'tailwindcss';\n";
+        $cssContent = "@import 'tailwindcss';\n";
         foreach ($customizations as $customization) {
             $cssContent .= ".{$customization->key} {\n";
             $cssContent .= "  @apply {$customization->value};\n";
@@ -29,14 +31,20 @@ class CompileThemeCss extends Command
 
         $publicCssPath = public_path('dynamic-theme.css');
 
-        $process = new Process([
+        $command = [
             'npx',
-            '@tailwindcss/cli',
+            'tailwindcss',
             '-i',
             $tempCssPath,
             '-o',
             $publicCssPath,
-        ]);
+            '--config',
+            base_path('tailwind.theme.config.js'),
+        ];
+
+        $this->info(implode(' ', $command));
+
+        $process = new Process($command);
         $process->run();
 
         if (!$process->isSuccessful()) {

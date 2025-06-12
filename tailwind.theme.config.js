@@ -17,24 +17,14 @@ export default {
         './vendor/wireui/wireui/src/View/**/*.php',
         './resources/views/**/*.blade.php',
         './resources/css/**/*.blade.css',
-    ],
-    safelist: [
-        'border-blue-500',
-        'border-gray-300',
-        'ring-2',
-        'ring-offset-2',
-        'ring-blue-500',
-        'ring-black',
-        'font-primary', // <-- Add this line to always generate this class
-        {
-        // You can also safelist patterns
-        pattern: /font-(primary|secondary|sans)/,
-        }
+        './storage/app/theme-source.css',
     ],
     theme: {
         extend: {
             fontFamily: {
                 sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+                primary: ['var(--font-primary)', ...defaultTheme.fontFamily.sans],
+                secondary: ['var(--font-secondary)', ...defaultTheme.fontFamily.sans],
             },
         },
     },

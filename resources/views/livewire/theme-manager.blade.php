@@ -11,7 +11,6 @@
             <tr>
                 <th class="px-4 py-2">Name</th>
                 <th class="px-4 py-2">Primary Font</th>
-                <th class="px-4 py-2">Secondary Font</th>
                 <th class="px-4 py-2">Colors</th>
                 <th class="px-4 py-2">Actions</th>
             </tr>
@@ -21,7 +20,6 @@
                 <tr>
                     <td class="border px-4 py-2">{{ $theme->name }}</td>
                     <td class="border px-4 py-2">{{ $theme->font_primary }}</td>
-                    <td class="border px-4 py-2">{{ $theme->font_secondary }}</td>
                     <td class="border px-4 py-2">
                         <div class="flex flex-wrap gap-1">
                             @foreach($theme->colors as $color)
@@ -50,10 +48,6 @@
                     <div>
                         <input type="text" wire:model="font_primary" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Primary Font">
                         @error('font_primary') <span class="text-red-500">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <input type="text" wire:model="font_secondary" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Secondary Font">
-                        @error('font_secondary') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
                 </div>
             <div class="flex items-center mt-4">

@@ -155,7 +155,7 @@ function addCustomStyleManagerProperties(editor) {
         open: true,
         }, { at: 0 });
 
-        sm.addProperty('tailwind_utils', {
+      /*  sm.addProperty('tailwind_utils', {
         id: TEXT_COLOR_PROP,
         name: 'Text Color',
         type: 'tailwind-class',
@@ -185,7 +185,7 @@ function addCustomStyleManagerProperties(editor) {
                 { id: 'bg-green-500', name: 'Green 500' },
                 { id: 'bg-blue-500', name: 'Blue 500' },
             ],
-        });
+        });*/
 
         sm.addProperty('tailwind_utils', {
             id: 'button-type',
@@ -194,10 +194,8 @@ function addCustomStyleManagerProperties(editor) {
             changeProp: 1,
             defaults: '',
             options: [
-                { id: '', name: 'Default' },
-                { id: 'btn-primary', name: 'Primary' },
-                { id: 'btn-secondary', name: 'Secondary' },
-                { id: 'btn-outline', name: 'Outline' },
+                { id: 'btn', name: 'Default' },
+                { id: 'btn-small', name: 'Small' },
             ],
         });
     });

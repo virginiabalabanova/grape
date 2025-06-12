@@ -46,18 +46,18 @@
                             @if(in_array($customization->key, $this->requiredKeys))
                                 <span class="block text-gray-500 py-2">{{ $customization->key }}</span>
                             @else
-                                <input type="text" id="key-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline py-2" value="{{ $customization->key }}" disabled>
+                                <input type="text" wire:model="styleValues.{{ $customization->id }}.key" id="key-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline py-2" value="{{ $customization->key }}">
                             @endif
                         </div>
                         <div class="flex-grow px-4">
-                            <input type="text" wire:model="styleValues.{{ $customization->id }}" id="value-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <input type="text" wire:model="styleValues.{{ $customization->id }}.value" id="value-{{ $customization->id }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
                         @if(!in_array($customization->key, $this->requiredKeys))
                             <div class="ml-auto pl-4 w-250px">
                                 <button wire:click="deleteStyle({{ $customization->id }})" class="text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="background-color: #f26430; letter-spacing: 0.05em;">-</button>
                             </div>
                         @else
-                            <div class="ml-auto pl-4" style="width: 70px;"></div>
+                            <div class="ml-auto pl-4" style="width: 58px;"></div>
                         @endif
                     </li>
                 @endforeach

@@ -55,15 +55,11 @@ class ThemeCustomizer extends Component
 
     private function loadCustomizations()
     {
-        return ThemeCustomization::where('theme_id', $this->theme)->get()->groupBy(function ($item) {
-            // Assign category based on known categories
-            foreach ($this->categories as $category => $keys) {
-                if ($item->category == $category) {
-                    return $category;
-                }
-            }
-            return 'other';
-        })->toArray();
+        return ThemeCustomization::where('theme_id', $this->theme)
+            ->orderBy('required', 'desc')
+            ->get()
+            ->groupBy('category')
+            ->toArray();
     }
 
     private function ensureRequiredKeysExist()
@@ -88,7 +84,10 @@ class ThemeCustomizer extends Component
         $this->styleValues = [];
         foreach ($this->customizations as $category => $styles) {
             foreach ($styles as $customization) {
-                $this->styleValues[$customization['id']] = $customization['value'];
+                $this->styleValues[$customization['id']] = [
+                    'key' => $customization['key'],
+                    'value' => $customization['value'],
+                ];
             }
         }
     }
@@ -105,7 +104,12 @@ class ThemeCustomizer extends Component
     public function updateAllStyles($category)
     {
         foreach ($this->customizations[$category] as $customization) {
-            ThemeCustomization::where('id', $customization['id'])->update(['value' => $this->styleValues[$customization['id']]]);
+            $model = ThemeCustomization::find($customization['id']);
+            if ($model) {
+                $model->key = $this->styleValues[$model->id]['key'];
+                $model->value = $this->styleValues[$model->id]['value'];
+                $model->save();
+            }
         }
 
         session()->flash('message', ucfirst($category) . ' styles updated successfully.');

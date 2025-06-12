@@ -1,32 +1,119 @@
 /*! tailwindcss v4.1.8 | MIT License | https://tailwindcss.com */
 @layer properties;
+:root, :host {
+  --font-sans: 'Comic Sans';
+  --font-semibold: 'Poppins';
+  --font-medium: 'Times New Roman';
+  --font-normal: 'Verdana';
+  --text-sm: 0.875rem;
+  --text-sm--line-height: calc(1.25 / 0.875);
+  --color-white: #FFFFFF;
+  --color-dark-green: #157640;
+}
 .btn {
-  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+  font-family: var(--font-sans);
+  font-family: var(--font-semibold);
   font-size: 14pt;
   --tw-leading: 18pt;
   line-height: 18pt;
-  --tw-font-weight: var(--font-weight-semibold, 600);
-  font-weight: var(--font-weight-semibold, 600);
   --tw-tracking: .09em;
   letter-spacing: .09em;
 }
-.btn-small {
-  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+.text-stat {
+  font-family: var(--font-medium);
+  font-family: var(--font-sans);
+  font-size: 234pt;
+  --tw-leading: 234pt;
+  line-height: 234pt;
+  --tw-tracking: -0.04em;
+  letter-spacing: -0.04em;
+}
+.text-hero {
+  font-family: var(--font-medium);
+  font-family: var(--font-sans);
+  font-size: 90pt;
+  --tw-leading: 90pt;
+  line-height: 90pt;
+  --tw-tracking: -0.04em;
+  letter-spacing: -0.04em;
+}
+.text-h1 {
+  font-family: var(--font-medium);
+  font-family: var(--font-sans);
+  font-size: 62pt;
+  --tw-leading: 66pt;
+  line-height: 66pt;
+  --tw-tracking: -0.04em;
+  letter-spacing: -0.04em;
+}
+.text-h2 {
+  font-family: var(--font-medium);
+  font-family: var(--font-sans);
+  font-size: 36pt;
+  --tw-leading: 40pt;
+  line-height: 40pt;
+  --tw-tracking: -0.04em;
+  letter-spacing: -0.04em;
+}
+.text-h3 {
+  font-family: var(--font-medium);
+  font-family: var(--font-sans);
+  font-size: 24pt;
+  --tw-leading: 30pt;
+  line-height: 30pt;
+  --tw-tracking: -0.04em;
+  letter-spacing: -0.04em;
+}
+.text-default {
+  margin-bottom: 17pt;
+  font-family: var(--font-normal);
+  font-family: var(--font-sans);
+  font-size: 16pt;
+  --tw-leading: 24pt;
+  line-height: 24pt;
+}
+.bold {
+  font-family: var(--font-semibold);
+}
+.small {
+  font-family: var(--font-normal);
+  font-family: var(--font-sans);
+  font-size: 14pt;
+  --tw-leading: 18pt;
+  line-height: 18pt;
+}
+.xsmall {
+  font-family: var(--font-normal);
+  font-family: var(--font-sans);
   font-size: 12pt;
   --tw-leading: 18pt;
   line-height: 18pt;
-  --tw-font-weight: var(--font-weight-semibold, 600);
-  font-weight: var(--font-weight-semibold, 600);
+}
+.btn-text {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--tw-leading, var(--text-sm--line-height));
+  --tw-leading: 18px;
+  line-height: 18px;
+  --tw-tracking: 1.26px;
+  letter-spacing: 1.26px;
+  text-transform: uppercase;
+  @media (width >= 48rem) {
+    font-family: var(--font-semibold);
+  }
+}
+.btn-small {
+  background-color: var(--color-dark-green);
+  font-family: var(--font-sans);
+  font-family: var(--font-semibold);
+  font-size: 12pt;
+  --tw-leading: 18pt;
+  line-height: 18pt;
   --tw-tracking: .09em;
   letter-spacing: .09em;
+  color: var(--color-white);
 }
 @property --tw-leading {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-font-weight {
   syntax: "*";
   inherits: false;
 }
@@ -38,7 +125,6 @@
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
       --tw-leading: initial;
-      --tw-font-weight: initial;
       --tw-tracking: initial;
     }
   }

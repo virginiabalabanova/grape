@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\ThemeCustomization;
+use App\Models\ThemeColor;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Process;
 
@@ -20,6 +21,21 @@ class CompileThemeCss extends Command
         $customizations = ThemeCustomization::where('theme_id', $themeId)->get();
 
         $cssContent = "@import 'tailwindcss';\n";
+
+        $colors = ThemeColor::all();
+        $cssContent = "@theme {\n";
+            $cssContent .= "  --font-sans: 'Comic Sans';\n";
+            $cssContent .= "  --font-semibold: 'Poppins';\n";
+            $cssContent .= "  --font-medium: 'Times New Roman';\n";
+            $cssContent .= "  --font-normal: 'Verdana';\n";
+            $cssContent .= "  --text-sm: 0.875rem;\n";
+            $cssContent .= "  --text-sm--line-height: calc(1.25 / 0.875);\n";
+            $cssContent .= " --breakpoint-md: 48rem; \n";
+            foreach ($colors as $color) {
+                $cssContent .= "  --color-{$color->name}: {$color->hex};\n";
+            }
+        $cssContent .= "}\n";
+
         foreach ($customizations as $customization) {
             $cssContent .= ".{$customization->key} {\n";
             $cssContent .= "  @apply {$customization->value};\n";

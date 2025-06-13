@@ -29,6 +29,9 @@ class CompileThemeCss extends Command
             $cssContent .= "  --font-medium: 'Times New Roman';\n";
             $cssContent .= "  --font-normal: 'Verdana';\n";
             $cssContent .= "  --text-sm: 0.875rem;\n";
+            $cssContent .= "  --radius-sm: 0.25rem;\n";
+            $cssContent .= "  --radius-md: 0.5rem;\n";
+            $cssContent .= "  --radius-lg: 1rem;\n";
             $cssContent .= "  --text-sm--line-height: calc(1.25 / 0.875);\n";
             $cssContent .= " --breakpoint-md: 48rem; \n";
             foreach ($colors as $color) {
@@ -37,8 +40,13 @@ class CompileThemeCss extends Command
         $cssContent .= "}\n";
 
         foreach ($customizations as $customization) {
+            // Temporary fix: Replace incorrect 'radius-sm' with correct 'rounded-sm'
+            // The user should fix the data in the database.
+            $value = str_replace('radius-sm', 'rounded-sm', $customization->value);
+            $value = str_replace('radius-md', 'rounded-md', $customization->value);
+
             $cssContent .= ".{$customization->key} {\n";
-            $cssContent .= "  @apply {$customization->value};\n";
+            $cssContent .= "  @apply {$value};\n";
             $cssContent .= "}\n";
         }
 

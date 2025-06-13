@@ -76,11 +76,23 @@
                 </li>
 </ul>
 
-            <div class="flex justify-end">
-                <button wire:click="updateAllStyles('{{ $category }}')" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009b72; letter-spacing: 0.05em;">
-                    Update All {{ ucfirst($category) }} Styles
+            <div class="flex justify-end items-center">
+                <div wire:loading wire:target="updateAllStyles('{{ $category }}')" class="mr-2 text-sm text-gray-600">
+                    Dispatching CSS recompile job...
+                </div>
+
+                @if (session()->has('message'))
+                    <div class="mr-2 text-sm text-green-600">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
+                <button wire:click="updateAllStyles('{{ $category }}')" wire:loading.attr="disabled" wire:target="updateAllStyles('{{ $category }}')" class="text-white py-2 px-4 rounded text-sm" style="background-color: #009b72; letter-spacing: 0.05em;">
+                    <span wire:loading.remove wire:target="updateAllStyles('{{ $category }}')">
+                        Update All {{ ucfirst($category) }} Styles
+                    </span>
                     <span wire:loading wire:target="updateAllStyles('{{ $category }}')">
-                        Updating...
+                        Saving...
                     </span>
                 </button>
             </div>

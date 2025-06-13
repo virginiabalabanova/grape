@@ -26,6 +26,11 @@ export default {
                 primary: ['var(--font-primary)', ...defaultTheme.fontFamily.sans],
                 secondary: ['var(--font-secondary)', ...defaultTheme.fontFamily.sans],
             },
+            borderRadius: {
+                sm: 'var(--radius-sm)',
+                md: 'var(--radius-md)',
+                lg: 'var(--radius-lg)',
+            }
         },
     },
 

@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Theme;
-use App\Models\ThemeCustomization;
+use Livewire\Component;
 use Illuminate\Support\Arr;
+use App\Jobs\CompileThemeCss;
+use App\Models\ThemeCustomization;
+use Illuminate\Support\Facades\Artisan;
 
 class ThemeCustomizer extends Component
 {
@@ -112,7 +114,10 @@ class ThemeCustomizer extends Component
             }
         }
 
-        session()->flash('message', ucfirst($category) . ' styles updated successfully.');
+        Artisan::call('theme:compile');
+        //dd(Artisan::output());
+
+        session()->flash('message', 'Theme styles saved! The CSS is now being recompiled in the background.');
         $this->customizations = $this->loadCustomizations();
         $this->initializeStyleValues();
     }

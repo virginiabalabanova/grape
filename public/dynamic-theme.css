@@ -6,8 +6,9 @@
   --font-medium: 'Times New Roman';
   --font-normal: 'Verdana';
   --text-sm: 0.875rem;
+  --radius-md: 0.5rem;
   --text-sm--line-height: calc(1.25 / 0.875);
-  --color-white: #FFFFFF;
+  --color-pink: #FF4CC6;
   --color-dark-green: #157640;
 }
 .btn {
@@ -89,6 +90,18 @@
   --tw-leading: 18pt;
   line-height: 18pt;
 }
+.btn-small {
+  border-radius: var(--radius-md);
+  background-color: var(--color-dark-green);
+  font-family: var(--font-sans);
+  font-family: var(--font-semibold);
+  font-size: 12pt;
+  --tw-leading: 18pt;
+  line-height: 18pt;
+  --tw-tracking: .09em;
+  letter-spacing: .09em;
+  color: var(--color-pink);
+}
 .btn-text {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -101,17 +114,6 @@
   @media (width >= 48rem) {
     font-family: var(--font-semibold);
   }
-}
-.btn-small {
-  background-color: var(--color-dark-green);
-  font-family: var(--font-sans);
-  font-family: var(--font-semibold);
-  font-size: 12pt;
-  --tw-leading: 18pt;
-  line-height: 18pt;
-  --tw-tracking: .09em;
-  letter-spacing: .09em;
-  color: var(--color-white);
 }
 @property --tw-leading {
   syntax: "*";

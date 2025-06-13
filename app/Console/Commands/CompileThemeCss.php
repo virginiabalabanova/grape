@@ -33,17 +33,28 @@ class CompileThemeCss extends Command
             $cssContent .= "  --radius-md: 0.5rem;\n";
             $cssContent .= "  --radius-lg: 1rem;\n";
             $cssContent .= "  --text-sm--line-height: calc(1.25 / 0.875);\n";
-            $cssContent .= " --breakpoint-md: 48rem; \n";
+            $cssContent .= "  --breakpoint-md: 48rem; \n";
+            $cssContent .= "  --tracking-tightest: -3.6px;\n";
+            $cssContent .= "  --tracking-tighter: -2.48px;\n";
+            $cssContent .= "  --tracking-tight: -1.44px;\n";
+            $cssContent .= "  --tracking-normal: 0em;\n";
+            $cssContent .= "  --tracking-wide: 0.025em;\n";
+            $cssContent .= "  --tracking-wider: 0.05em;\n";
+            $cssContent .= "  --tracking-widest: 0.1em;\n";
+            $cssContent .= "  --tracking-widest-px: 1.26px;\n";
+            $cssContent .= "  --spacing-20px: 20px;\n";
+            $cssContent .= "  --spacing-30px: 30px;\n";
             foreach ($colors as $color) {
                 $cssContent .= "  --color-{$color->name}: {$color->hex};\n";
             }
         $cssContent .= "}\n";
 
         foreach ($customizations as $customization) {
-            // Temporary fix: Replace incorrect 'radius-sm' with correct 'rounded-sm'
+            // Temporary fix: Replace incorrect 'radius-*' with correct 'rounded-*'
             // The user should fix the data in the database.
             $value = str_replace('radius-sm', 'rounded-sm', $customization->value);
-            $value = str_replace('radius-md', 'rounded-md', $customization->value);
+            $value = str_replace('radius-md', 'rounded-md', $value);
+            $value = str_replace('radius-lg', 'rounded-lg', $value);
 
             $cssContent .= ".{$customization->key} {\n";
             $cssContent .= "  @apply {$value};\n";

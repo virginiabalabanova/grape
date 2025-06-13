@@ -30,6 +30,20 @@ export default {
                 sm: 'var(--radius-sm)',
                 md: 'var(--radius-md)',
                 lg: 'var(--radius-lg)',
+            },
+            letterSpacing: {
+                tightest: 'var(--tracking-tightest)',
+                tighter: 'var(--tracking-tighter)',
+                tight: 'var(--tracking-tight)',
+                normal: 'var(--tracking-normal)',
+                wide: 'var(--tracking-wide)',
+                wider: 'var(--tracking-wider)',
+                widest: 'var(--tracking-widest)',
+                'widest-px': 'var(--tracking-widest-px)',
+            },
+            spacing: {
+                '20px': 'var(--spacing-20px)',
+                '30px': 'var(--spacing-30px)',
             }
         },
     },
